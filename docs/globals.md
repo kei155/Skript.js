@@ -1,6 +1,6 @@
-[skript](globals.md)
+[@owneul/skript](README.md) › [Globals](globals.md)
 
-# skript
+# @owneul/skript
 
 ## Index
 

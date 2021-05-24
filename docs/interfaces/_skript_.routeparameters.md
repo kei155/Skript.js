@@ -1,4 +1,4 @@
-[skript](../globals.md) › ["Skript"](../modules/_skript_.md) › [RouteParameters](_skript_.routeparameters.md)
+[@owneul/skript](../README.md) › [Globals](../globals.md) › ["Skript"](../modules/_skript_.md) › [RouteParameters](_skript_.routeparameters.md)
 
 # Interface: RouteParameters
 

@@ -1,4 +1,4 @@
-[skript](../globals.md) › ["Skript"](../modules/_skript_.md) › [Tick](_skript_.tick.md)
+[@owneul/skript](../README.md) › [Globals](../globals.md) › ["Skript"](../modules/_skript_.md) › [Tick](_skript_.tick.md)
 
 # Interface: Tick
 
@@ -26,7 +26,7 @@ interval을 관리하기 위한 구조체
 
 • **count**: *number*
 
-Defined in Skript.ts:79
+*Defined in [Skript.ts:79](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L79)*
 
 tick 된 횟수
 
@@ -36,7 +36,7 @@ ___
 
 • **do**: *function*
 
-Defined in Skript.ts:94
+*Defined in [Skript.ts:94](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L94)*
 
 interval 동안 실행 될 함수
 
@@ -62,7 +62,7 @@ ___
 
 • **endHandler**: *function*
 
-Defined in Skript.ts:89
+*Defined in [Skript.ts:89](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L89)*
 
 종료시 실행할 메소드
 
@@ -76,7 +76,7 @@ ___
 
 • **intervalId**: *number*
 
-Defined in Skript.ts:74
+*Defined in [Skript.ts:74](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L74)*
 
 interval 고유키
 
@@ -86,7 +86,7 @@ ___
 
 • **tester**: *function*
 
-Defined in Skript.ts:84
+*Defined in [Skript.ts:84](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L84)*
 
 종료여부를 확인하기 위한 테스터 메소드
 
@@ -100,7 +100,7 @@ ___
 
 • **until**: *function*
 
-Defined in Skript.ts:99
+*Defined in [Skript.ts:99](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L99)*
 
 종료여부를 확인할 메소드
 
@@ -120,7 +120,7 @@ ___
 
 • **whenEnd**: *function*
 
-Defined in Skript.ts:104
+*Defined in [Skript.ts:104](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L104)*
 
 종료되었을 때 실행할 메소드 지정
 

@@ -1,4 +1,4 @@
-[skript](../globals.md) › ["Skript"](_skript_.md)
+[@owneul/skript](../README.md) › [Globals](../globals.md) › ["Skript"](_skript_.md)
 
 # Module: "Skript"
 

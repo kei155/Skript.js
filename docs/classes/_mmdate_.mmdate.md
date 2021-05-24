@@ -1,4 +1,4 @@
-[skript](../globals.md) › ["MMDate"](../modules/_mmdate_.md) › [MMDate](_mmdate_.mmdate.md)
+[@owneul/skript](../README.md) › [Globals](../globals.md) › ["MMDate"](../modules/_mmdate_.md) › [MMDate](_mmdate_.mmdate.md)
 
 # Class: MMDate
 
@@ -37,7 +37,7 @@
 
 \+ **new MMDate**(`input?`: any): *[MMDate](_mmdate_.mmdate.md)*
 
-Defined in MMDate.ts:11
+*Defined in [MMDate.ts:11](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L11)*
 
 **Parameters:**
 
@@ -53,7 +53,7 @@ Name | Type |
 
 • **get ymd**(): *string*
 
-Defined in MMDate.ts:27
+*Defined in [MMDate.ts:27](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L27)*
 
 ymd 축약 게터
 
@@ -72,7 +72,7 @@ mmDate.ymd
 
 ▸ **after**(`term`: number, `unit`: any): *[MMDate](_mmdate_.mmdate.md)*
 
-Defined in MMDate.ts:254
+*Defined in [MMDate.ts:254](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L254)*
 
 인스턴스에서 지정된 간격만큼 이후의 MMDate 인스턴스를 생성해서 반환
 
@@ -99,7 +99,7 @@ ___
 
 ▸ **before**(`term`: number, `unit`: any): *[MMDate](_mmdate_.mmdate.md)*
 
-Defined in MMDate.ts:237
+*Defined in [MMDate.ts:237](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L237)*
 
 인스턴스에서 지정된 간격만큼 이전의 MMDate 인스턴스를 생성해서 반환
 
@@ -126,7 +126,7 @@ ___
 
 ▸ **diffIn**(`targetInput`: any, `unit`: any, `isTruncate`: boolean): *number*
 
-Defined in MMDate.ts:71
+*Defined in [MMDate.ts:71](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L71)*
 
 두 시간점 사이의 간격을 구하는 메소드
 
@@ -156,7 +156,7 @@ ___
 
 ▸ **format**(`format?`: undefined | string): *string*
 
-Defined in MMDate.ts:53
+*Defined in [MMDate.ts:53](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L53)*
 
 날짜 포맷팅 메소드
 
@@ -181,7 +181,7 @@ ___
 
 ▸ **getDateInstance**(): *Date*
 
-Defined in MMDate.ts:39
+*Defined in [MMDate.ts:39](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L39)*
 
 native Date 인스턴스를 획득
 
@@ -199,7 +199,7 @@ ___
 
 ▸ **isAfter**(`targetInput`: any, `unit`: any): *boolean*
 
-Defined in MMDate.ts:217
+*Defined in [MMDate.ts:217](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L217)*
 
 비교대상 시간점의 날짜보다 이후인지를 체크하는 메소드
 
@@ -229,7 +229,7 @@ ___
 
 ▸ **isAfterOrEqual**(`targetInput`: any, `unit`: any): *boolean*
 
-Defined in MMDate.ts:194
+*Defined in [MMDate.ts:194](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L194)*
 
 비교대상 시간점의 날짜와 같거나 이후인지를 체크하는 메소드
 
@@ -255,7 +255,7 @@ ___
 
 ▸ **isBefore**(`targetInput`: any, `unit`: any): *boolean*
 
-Defined in MMDate.ts:175
+*Defined in [MMDate.ts:175](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L175)*
 
 비교대상 시간점의 날짜보다 이전인지를 체크하는 메소드
 
@@ -281,7 +281,7 @@ ___
 
 ▸ **isBeforeOrEqual**(`targetInput`: any, `unit`: any): *boolean*
 
-Defined in MMDate.ts:156
+*Defined in [MMDate.ts:156](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L156)*
 
 비교대상 시간점의 날짜와 같거나 이전인지를 체크하는 메소드
 
@@ -309,6 +309,6 @@ ___
 
 ▸ **toString**(): *string*
 
-Defined in MMDate.ts:258
+*Defined in [MMDate.ts:258](https://github.com/kei155/Skript.js/blob/3b19926/MMDate.ts#L258)*
 
 **Returns:** *string*

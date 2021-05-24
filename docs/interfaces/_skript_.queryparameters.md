@@ -1,4 +1,4 @@
-[skript](../globals.md) › ["Skript"](../modules/_skript_.md) › [QueryParameters](_skript_.queryparameters.md)
+[@owneul/skript](../README.md) › [Globals](../globals.md) › ["Skript"](../modules/_skript_.md) › [QueryParameters](_skript_.queryparameters.md)
 
 # Interface: QueryParameters
 

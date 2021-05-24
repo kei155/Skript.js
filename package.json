@@ -1,14 +1,23 @@
 {
-  "name": "skript",
+  "name": "@owneul/skript",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "javascript Helper Script Library for Web Developers.",
+  "main": "dist/Skript.js",
+  "keywords": [
+    "javascript",
+    "web developer",
+    "javascript helper",
+    "skript",
+    "kei",
+    "keideaness"
+  ],
+  "repository": "https://github.com/kei155/Skript.js.git",
   "scripts": {
-    "start": "typedoc --plugin typedoc-plugin-markdown --out ./docs",
+    "start": "typedoc --plugin typedoc-plugin-markdown && parcel Skript.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Keideaness <owneul@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "typedoc": "^0.20.36",
     "typedoc-plugin-markdown": "^3.8.1",

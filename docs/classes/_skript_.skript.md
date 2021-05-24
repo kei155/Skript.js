@@ -1,4 +1,4 @@
-[skript](../globals.md) › ["Skript"](../modules/_skript_.md) › [Skript](_skript_.skript.md)
+[@owneul/skript](../README.md) › [Globals](../globals.md) › ["Skript"](../modules/_skript_.md) › [Skript](_skript_.skript.md)
 
 # Class: Skript
 
@@ -79,7 +79,7 @@
 
 \+ **new Skript**(): *[Skript](_skript_.skript.md)*
 
-Defined in Skript.ts:115
+*Defined in [Skript.ts:115](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L115)*
 
 **Returns:** *[Skript](_skript_.skript.md)*
 
@@ -89,7 +89,7 @@ Defined in Skript.ts:115
 
 • **_loadRouteEndpoint**: *string* = "/common/routes"
 
-Defined in Skript.ts:149
+*Defined in [Skript.ts:149](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L149)*
 
 route fetch endpoint
 
@@ -99,7 +99,7 @@ ___
 
 • **callbacks**: *any*
 
-Defined in Skript.ts:2703
+*Defined in [Skript.ts:2703](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2703)*
 
 콜백 메소드를 거치해놓기 위한 번들 객체
 
@@ -109,7 +109,7 @@ ___
 
 • **diffInTimeServerToScript**? : *undefined | number*
 
-Defined in Skript.ts:138
+*Defined in [Skript.ts:138](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L138)*
 
 서버시간과 서버시간 확정 스크립트 실행까지의 간격
 
@@ -119,7 +119,7 @@ ___
 
 • **editors**: *object*
 
-Defined in Skript.ts:123
+*Defined in [Skript.ts:123](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L123)*
 
 에디터 관리 객체
 
@@ -131,7 +131,7 @@ ___
 
 • **initializePromise**: *Promise‹any› | null* = null
 
-Defined in Skript.ts:144
+*Defined in [Skript.ts:144](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L144)*
 
 ___
 
@@ -139,7 +139,7 @@ ___
 
 • **instanceCreatedAt**: *Date*
 
-Defined in Skript.ts:128
+*Defined in [Skript.ts:128](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L128)*
 
 인스턴스 생성된 시간
 
@@ -149,7 +149,7 @@ ___
 
 • **isInitialized**: *boolean* = false
 
-Defined in Skript.ts:143
+*Defined in [Skript.ts:143](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L143)*
 
 앱 인스턴스 초기화 완료 여부
 
@@ -159,7 +159,7 @@ ___
 
 • **md5**: *md5* = md5
 
-Defined in Skript.ts:2691
+*Defined in [Skript.ts:2691](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2691)*
 
 MD5 암호화 함수
 
@@ -175,7 +175,7 @@ ___
 
 • **routes**: *any[]* = []
 
-Defined in Skript.ts:2489
+*Defined in [Skript.ts:2489](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2489)*
 
 라우트 데이터를 보관하는 변수
 
@@ -185,7 +185,7 @@ ___
 
 • **serverNowDatetime**? : *Date*
 
-Defined in Skript.ts:133
+*Defined in [Skript.ts:133](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L133)*
 
 서버에서 전달해준 현재시간
 
@@ -195,7 +195,7 @@ ___
 
 • **vues**: *any*
 
-Defined in Skript.ts:2708
+*Defined in [Skript.ts:2708](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2708)*
 
 각 페이지에서 뷰 인스턴스를 관리하기 위한 번들 객체
 
@@ -205,7 +205,7 @@ Defined in Skript.ts:2708
 
 ▸ **addAction**(`selector`: string | HTMLElement | NodeList | Window | Document, `args`: Function | [AddActionOption](../interfaces/_skript_.addactionoption.md)): *void*
 
-Defined in Skript.ts:566
+*Defined in [Skript.ts:566](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L566)*
 
 화면 구성요소에 이벤트를 걸어주는 숏컷함수
 
@@ -241,7 +241,7 @@ ___
 
 ▸ **clone**(`value`: any): *any*
 
-Defined in Skript.ts:503
+*Defined in [Skript.ts:503](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L503)*
 
 객체 deep clone 메소드
 
@@ -289,7 +289,7 @@ ___
 
 ▸ **countdown**(`targetDatetime`: Date | string, `intervalType`: string, `countdownHandler`: function, `excuteOnInitialized`: boolean): *Promise‹void›*
 
-Defined in Skript.ts:2406
+*Defined in [Skript.ts:2406](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2406)*
 
 카운트다운 헬퍼
 
@@ -341,7 +341,7 @@ ___
 
 ▸ **extract**(`selector`: string, `options?`: [ExtractOption](../interfaces/_skript_.extractoption.md)): *object | FormData*
 
-Defined in Skript.ts:1073
+*Defined in [Skript.ts:1073](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1073)*
 
 **`throws`** Error - 대상 엘리먼트가 존재하지 않거나 데이터 타입이 유효하지 않으면 예외를 발생시킴
 
@@ -380,7 +380,7 @@ ___
 
 ▸ **extractFormData**(`element`: Element, `appends?`: any): *FormData*
 
-Defined in Skript.ts:1207
+*Defined in [Skript.ts:1207](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1207)*
 
 **`brief`** 엘리먼트에서 FormData 인스턴스 추출 (extract 함수의 타입 축약형)
 
@@ -409,7 +409,7 @@ ___
 
 ▸ **extractJson**(`element`: Element, `appends?`: any): *any*
 
-Defined in Skript.ts:1112
+*Defined in [Skript.ts:1112](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1112)*
 
 엘리먼트에서 JavaScript Object 인스턴스 추출 (extract 함수의 타입 축약형)
 
@@ -438,7 +438,7 @@ ___
 
 ▸ **getQueryParam**(`paramKey`: string, `querystring?`: undefined | string): *string | number | object*
 
-Defined in Skript.ts:301
+*Defined in [Skript.ts:301](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L301)*
 
 쿼리스트링의 특정 키값을 조회
 
@@ -473,7 +473,7 @@ ___
 
 ▸ **getQueryParams**(`querystring?`: undefined | string): *[QueryParameters](../interfaces/_skript_.queryparameters.md)*
 
-Defined in Skript.ts:349
+*Defined in [Skript.ts:349](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L349)*
 
 쿼리스트링을 분해하여 반환
 
@@ -502,7 +502,7 @@ ___
 
 ▸ **getRouteParamAt**(`position`: number, `pathname?`: undefined | string): *string | null*
 
-Defined in Skript.ts:269
+*Defined in [Skript.ts:269](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L269)*
 
 특정 위치의 라우트 파라미터를 획득
 
@@ -532,7 +532,7 @@ ___
 
 ▸ **getRouteParams**(`pattern`: string, `pathname?`: undefined | string): *[RouteParameters](../interfaces/_skript_.routeparameters.md)*
 
-Defined in Skript.ts:195
+*Defined in [Skript.ts:195](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L195)*
 
 라우트 파라미터 조회
 
@@ -568,7 +568,7 @@ ___
 
 ▸ **getRouteParamsByName**(`routeName`: string, `pathname?`: undefined | string): *[RouteParameters](../interfaces/_skript_.routeparameters.md)*
 
-Defined in Skript.ts:164
+*Defined in [Skript.ts:164](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L164)*
 
 라우트 이름으로 파라미터를 추출
 
@@ -597,7 +597,7 @@ ___
 
 ▸ **groupBy**(`arr`: any[], `keyName`: string, `keyModifier?`: undefined | function): *object*
 
-Defined in Skript.ts:1453
+*Defined in [Skript.ts:1453](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1453)*
 
 배열을 특정 키값으로 그룹핑
 
@@ -661,7 +661,7 @@ ___
 
 ▸ **init**(`initializer?`: undefined | function): *Promise‹[Skript](_skript_.skript.md)›*
 
-Defined in Skript.ts:2602
+*Defined in [Skript.ts:2602](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2602)*
 
 모든 페이지에서 적용해야하는 앱 초기화 함수
 앱 페이지가 작동하기 전 실행되어야하는 비동기 액션을 실행한 후 프로미스를 반환
@@ -692,7 +692,7 @@ ___
 
 ▸ **loadRoutes**(): *Promise‹any›*
 
-Defined in Skript.ts:2495
+*Defined in [Skript.ts:2495](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2495)*
 
 라우트 데이터 조회 메소드
 
@@ -704,7 +704,7 @@ ___
 
 ▸ **querify**(`obj`: any): *string*
 
-Defined in Skript.ts:733
+*Defined in [Skript.ts:733](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L733)*
 
 데이터 요소를 전달받아 쿼리스트링으로 변환하는 메소드
 
@@ -768,7 +768,7 @@ ___
 
 ▸ **random**(`min`: number, `max`: number, `isFloor`: boolean): *number*
 
-Defined in Skript.ts:1387
+*Defined in [Skript.ts:1387](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1387)*
 
 지정된 범위 내의 무작위 수를 반환하는 함수
 
@@ -799,7 +799,7 @@ ___
 
 ▸ **range**(`start`: number, `end`: number): *number[]*
 
-Defined in Skript.ts:1354
+*Defined in [Skript.ts:1354](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1354)*
 
 지정한 범위의 숫자 범위 배열을 생성
 
@@ -828,7 +828,7 @@ ___
 
 ▸ **route**(`name`: string, `parameters?`: undefined | object): *string*
 
-Defined in Skript.ts:2519
+*Defined in [Skript.ts:2519](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2519)*
 
 라우트 경로 생성 메소드
 
@@ -858,7 +858,7 @@ ___
 
 ▸ **runAction**(`selector`: string | HTMLElement | NodeList | Window | Document, `func`: Function): *void*
 
-Defined in Skript.ts:641
+*Defined in [Skript.ts:641](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L641)*
 
 브라우저 구성요소에 이벤트를 실행하는 숏컷함수
 
@@ -887,7 +887,7 @@ ___
 
 ▸ **runWhenReady**(`checkTarget`: string | function | string | function[], `task`: Function, `tryCount`: number, `intervalSecond`: number): *void*
 
-Defined in Skript.ts:1565
+*Defined in [Skript.ts:1565](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1565)*
 
 runWhenReady 대상이 준비되면(null,undefined가 아니게 되면) 정해진 동작을 실행하는 메소드
 
@@ -921,7 +921,7 @@ ___
 
 ▸ **setServerNowDatetime**(`serverNowDatetime`: Date | string): *void*
 
-Defined in Skript.ts:2352
+*Defined in [Skript.ts:2352](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2352)*
 
 앱 스크립트 인스턴스에 서버 현재시간을 반영
 서버의 시간과 클라이언트의 시간 사이에 발생하는 차이를 잡기 위해 사용하는 메소드.
@@ -944,7 +944,7 @@ ___
 
 ▸ **syncQueryParamsToPage**(`customHandlers?`: undefined | object, `querystring?`: undefined | string): *void*
 
-Defined in Skript.ts:947
+*Defined in [Skript.ts:947](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L947)*
 
 쿼리스트링을 분석해 해당하는 페이지 요소에 채워줌
 
@@ -990,7 +990,7 @@ ___
 
 ▸ **tick**(`interval`: number): *[Tick](../interfaces/_skript_.tick.md)*
 
-Defined in Skript.ts:1507
+*Defined in [Skript.ts:1507](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1507)*
 
 setInterval 랩핑함수
 
@@ -1024,7 +1024,7 @@ ___
 
 ▸ **uuidv4**(): *string*
 
-Defined in Skript.ts:1639
+*Defined in [Skript.ts:1639](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1639)*
 
 UUID 를 생성
 
@@ -1036,7 +1036,7 @@ ___
 
 ▸ **wait**(`second`: number): *Promise‹number›*
 
-Defined in Skript.ts:1332
+*Defined in [Skript.ts:1332](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1332)*
 
 setTimeout 랩핑함수
 
@@ -1074,7 +1074,7 @@ Name | Type | Description |
 
 ### ▪ **ajax**: *object*
 
-Defined in Skript.ts:520
+*Defined in [Skript.ts:520](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L520)*
 
 ajax 요청용 랩핑 프로퍼티
 
@@ -1082,25 +1082,25 @@ ajax 요청용 랩핑 프로퍼티
 
 • **_app**: *this* = this
 
-Defined in Skript.ts:521
+*Defined in [Skript.ts:521](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L521)*
 
 ###  get
 
 • **get**: *get* = axios.get
 
-Defined in Skript.ts:522
+*Defined in [Skript.ts:522](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L522)*
 
 ###  post
 
 • **post**: *post* = axios.post
 
-Defined in Skript.ts:523
+*Defined in [Skript.ts:523](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L523)*
 
 ###  delete
 
 ▸ **delete**(`url`: string, `config?`: any): *Promise‹AxiosResponse‹any››*
 
-Defined in Skript.ts:533
+*Defined in [Skript.ts:533](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L533)*
 
 **Parameters:**
 
@@ -1115,7 +1115,7 @@ Name | Type |
 
 ▸ **put**(`url`: string, `data?`: any, `config?`: any): *Promise‹AxiosResponse‹any››*
 
-Defined in Skript.ts:524
+*Defined in [Skript.ts:524](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L524)*
 
 **Parameters:**
 
@@ -1133,7 +1133,7 @@ ___
 
 ### ▪ **dom**: *object*
 
-Defined in Skript.ts:1727
+*Defined in [Skript.ts:1727](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1727)*
 
 dom 관련 헬퍼함수
 
@@ -1141,7 +1141,7 @@ dom 관련 헬퍼함수
 
 • **app**: *this* = this
 
-Defined in Skript.ts:1731
+*Defined in [Skript.ts:1731](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1731)*
 
 **`var`** Skript
 
@@ -1149,7 +1149,7 @@ Defined in Skript.ts:1731
 
 ▸ **count**(`selector`: string | any[], `filter?`: undefined | function): *number*
 
-Defined in Skript.ts:1901
+*Defined in [Skript.ts:1901](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1901)*
 
 셀렉터에 해당하는 요소 갯수를 구하는 메소드
 
@@ -1189,7 +1189,7 @@ Name | Type | Description |
 
 ▸ **inputOnly**(`targetElement`: HTMLElement, `type`: string, `onKeyup`: boolean): *void*
 
-Defined in Skript.ts:1751
+*Defined in [Skript.ts:1751](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1751)*
 
 **`example`** 
 ```html
@@ -1218,7 +1218,7 @@ Name | Type | Default | Description |
 
 ▸ **pluckAttribute**(`cssSelector`: string, `attributeName`: string, `filter?`: undefined | function): *Array‹any›*
 
-Defined in Skript.ts:1858
+*Defined in [Skript.ts:1858](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1858)*
 
 **`example`** 
 ```html
@@ -1252,7 +1252,7 @@ Name | Type | Description |
 
 ▸ **pluckValue**(`cssSelector`: string, `filter?`: undefined | function): *Array‹any›*
 
-Defined in Skript.ts:1811
+*Defined in [Skript.ts:1811](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1811)*
 
 **`example`** 
 ```html
@@ -1287,7 +1287,7 @@ ___
 
 ### ▪ **is**: *object*
 
-Defined in Skript.ts:1652
+*Defined in [Skript.ts:1652](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1652)*
 
 is 체크를 할 수 있는 테스터 객체
 
@@ -1295,7 +1295,7 @@ is 체크를 할 수 있는 테스터 객체
 
 ▸ **array**(`value`: any): *boolean*
 
-Defined in Skript.ts:1666
+*Defined in [Skript.ts:1666](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1666)*
 
 주어진 값이 배열인지 체크
 
@@ -1311,7 +1311,7 @@ Name | Type |
 
 ▸ **empty**(`value`: any): *boolean*
 
-Defined in Skript.ts:1691
+*Defined in [Skript.ts:1691](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1691)*
 
 주어진 값이 비어있는지 체크
 null, undefined, 빈 배열, 빈 오브젝트({}), 빈 문자열, 공백으로만 이루어진 문자열에 true 값을 반환
@@ -1328,7 +1328,7 @@ Name | Type |
 
 ▸ **function**(`value`: any): *boolean*
 
-Defined in Skript.ts:1711
+*Defined in [Skript.ts:1711](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1711)*
 
 주어진 값이 함수인지 체크
 
@@ -1344,7 +1344,7 @@ Name | Type |
 
 ▸ **null**(`value`: any): *boolean*
 
-Defined in Skript.ts:1674
+*Defined in [Skript.ts:1674](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1674)*
 
 주어진 값이 null 인지 체크
 
@@ -1360,7 +1360,7 @@ Name | Type |
 
 ▸ **number**(`value`: any): *boolean*
 
-Defined in Skript.ts:1658
+*Defined in [Skript.ts:1658](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1658)*
 
 숫자 또는 숫자로 변환할 수 있는 값인지 체크
 
@@ -1376,7 +1376,7 @@ Name | Type |
 
 ▸ **string**(`value`: any): *boolean*
 
-Defined in Skript.ts:1719
+*Defined in [Skript.ts:1719](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1719)*
 
 주어진 값이 문자열인지 체크
 
@@ -1392,7 +1392,7 @@ Name | Type |
 
 ▸ **undefined**(`value`: any): *boolean*
 
-Defined in Skript.ts:1682
+*Defined in [Skript.ts:1682](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1682)*
 
 주어진 값이 undefined 인지 체크
 
@@ -1410,7 +1410,7 @@ ___
 
 ### ▪ **number**: *object*
 
-Defined in Skript.ts:1938
+*Defined in [Skript.ts:1938](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1938)*
 
 숫자 관련 헬퍼함수
 
@@ -1418,7 +1418,7 @@ Defined in Skript.ts:1938
 
 ▸ **comma**(`value`: number): *string*
 
-Defined in Skript.ts:1949
+*Defined in [Skript.ts:1949](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1949)*
 
 주어진 숫자값을 3자리 단위로 콤마처리
 
@@ -1442,7 +1442,7 @@ ___
 
 ### ▪ **pageScripts**: *object*
 
-Defined in Skript.ts:2696
+*Defined in [Skript.ts:2696](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2696)*
 
 각 페이지에서 네임스페이스를 적용하기 위한 번들 객체
 
@@ -1450,7 +1450,7 @@ Defined in Skript.ts:2696
 
 • **common**: *object*
 
-Defined in Skript.ts:2697
+*Defined in [Skript.ts:2697](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2697)*
 
 #### Type declaration:
 
@@ -1460,7 +1460,7 @@ ___
 
 ### ▪ **str**: *object*
 
-Defined in Skript.ts:1966
+*Defined in [Skript.ts:1966](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1966)*
 
 문자열 관련 헬퍼함수
 
@@ -1468,7 +1468,7 @@ Defined in Skript.ts:1966
 
 ▸ **contains**(`value`: string, `check`: string): *boolean*
 
-Defined in Skript.ts:1981
+*Defined in [Skript.ts:1981](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L1981)*
 
 주어진 문자열에 해당 값이 존재하는지 체크
 
@@ -1494,7 +1494,7 @@ Name | Type | Description |
 
 ▸ **containsAll**(`value`: string, `checks`: string[]): *boolean*
 
-Defined in Skript.ts:2003
+*Defined in [Skript.ts:2003](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2003)*
 
 주어진 문자열에 해당 배열의 값이 모두 존재하는지 체크
 
@@ -1520,7 +1520,7 @@ Name | Type | Description |
 
 ▸ **containsAny**(`value`: string, `checks`: string[]): *boolean*
 
-Defined in Skript.ts:2030
+*Defined in [Skript.ts:2030](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2030)*
 
 주어진 문자열에 해당 배열의 값중에 하나라도 존재하는지 체크
 
@@ -1546,7 +1546,7 @@ Name | Type | Description |
 
 ▸ **endsWith**(`value`: string, `check`: string | string[]): *boolean*
 
-Defined in Skript.ts:2057
+*Defined in [Skript.ts:2057](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2057)*
 
 주어진 문자열에 해당 값으로 끝나는지 체크
 
@@ -1572,7 +1572,7 @@ Name | Type | Description |
 
 ▸ **finish**(`value`: string, `ends`: string): *string*
 
-Defined in Skript.ts:2090
+*Defined in [Skript.ts:2090](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2090)*
 
 주어진 문자열에 해당 값으로 끝난다면 주어진 문자열을, 해당 값으로 끝나지 않는다면 해당 값을 붙여 반환
 
@@ -1598,7 +1598,7 @@ Name | Type | Description |
 
 ▸ **left**(`text`: string, `length`: number): *string*
 
-Defined in Skript.ts:2323
+*Defined in [Skript.ts:2323](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2323)*
 
 문자열의 왼쪽부터 지정된 길이를 반환
 
@@ -1621,7 +1621,7 @@ Name | Type | Description |
 
 ▸ **limit**(`value`: string, `limitLength`: number, `limitMark`: string): *string*
 
-Defined in Skript.ts:2162
+*Defined in [Skript.ts:2162](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2162)*
 
 문자열 길이를 제한(초과시 축약 문자열을 붙여 반환)
 
@@ -1645,7 +1645,7 @@ Name | Type | Default | Description |
 
 ▸ **padLeft**(`value`: string, `length`: number, `padString`: string): *string*
 
-Defined in Skript.ts:2246
+*Defined in [Skript.ts:2246](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2246)*
 
 left pad 처리
 
@@ -1674,7 +1674,7 @@ Name | Type | Description |
 
 ▸ **padRight**(`value`: string, `length`: number, `padString`: string): *string*
 
-Defined in Skript.ts:2267
+*Defined in [Skript.ts:2267](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2267)*
 
 right pad 처리
 
@@ -1703,7 +1703,7 @@ Name | Type | Description |
 
 ▸ **reverseLimit**(`value`: string, `limitLength`: number, `limitMark`: string): *string*
 
-Defined in Skript.ts:2189
+*Defined in [Skript.ts:2189](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2189)*
 
 문자열 길이를 뒤에서부터 제한(초과시 축약 문자열을 붙여 반환)
 
@@ -1727,7 +1727,7 @@ Name | Type | Default | Description |
 
 ▸ **right**(`text`: string, `length`: number): *string*
 
-Defined in Skript.ts:2338
+*Defined in [Skript.ts:2338](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2338)*
 
 문자열의 오른쪽부터 지정된 길이를 반환
 
@@ -1750,7 +1750,7 @@ Name | Type | Description |
 
 ▸ **start**(`value`: string, `starts`: string): *string*
 
-Defined in Skript.ts:2142
+*Defined in [Skript.ts:2142](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2142)*
 
 주어진 문자열에 해당 값으로 시작한다면 주어진 문자열을, 해당 값으로 시작하지 않는다면 해당 값을 붙여 반환
 
@@ -1776,7 +1776,7 @@ Name | Type | Description |
 
 ▸ **startsWith**(`value`: string, `check`: string | string[]): *boolean*
 
-Defined in Skript.ts:2112
+*Defined in [Skript.ts:2112](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2112)*
 
 주어진 문자열에 해당 값으로 시작하는지 체크
 
@@ -1802,7 +1802,7 @@ Name | Type | Description |
 
 ▸ **wrap**(`value`: string, `target`: string, `before`: string, `after`: string): *string*
 
-Defined in Skript.ts:2217
+*Defined in [Skript.ts:2217](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L2217)*
 
 문자열 내부의 특정 문자열을 주어진 값으로 감싸 반환
 

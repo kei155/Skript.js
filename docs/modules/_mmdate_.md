@@ -1,4 +1,4 @@
-[skript](../globals.md) › ["MMDate"](_mmdate_.md)
+[@owneul/skript](../README.md) › [Globals](../globals.md) › ["MMDate"](_mmdate_.md)
 
 # Module: "MMDate"
 

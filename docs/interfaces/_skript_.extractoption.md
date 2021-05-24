@@ -1,4 +1,4 @@
-[skript](../globals.md) › ["Skript"](../modules/_skript_.md) › [ExtractOption](_skript_.extractoption.md)
+[@owneul/skript](../README.md) › [Globals](../globals.md) › ["Skript"](../modules/_skript_.md) › [ExtractOption](_skript_.extractoption.md)
 
 # Interface: ExtractOption
 
@@ -21,7 +21,7 @@ Skript.extract 호출에서 구현되는 옵션 데이터 인터페이스
 
 • **appends**: *any*
 
-Defined in Skript.ts:64
+*Defined in [Skript.ts:64](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L64)*
 
 취합취득할 데이터 (전달된 셀렉터를 통해 지정되는 데이터가 있다면 덮어씌워짐)
 
@@ -31,6 +31,6 @@ ___
 
 • **dataType**: *string*
 
-Defined in Skript.ts:59
+*Defined in [Skript.ts:59](https://github.com/kei155/Skript.js/blob/3b19926/Skript.ts#L59)*
 
 반환 데이터 타입 (json, FormData)
