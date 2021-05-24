@@ -1,0 +1,4 @@
+[skript](globals.md)
+
+# skript
+
