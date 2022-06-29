@@ -461,7 +461,12 @@ class Skript {
       return true
     } else if (value === 'false') {
       return false
-    } else if (!value.match(/[^\d\.]/) && this.is.number(value)) {
+    } else if (
+      !value.match(/^0/) &&
+      !value.match(/[^\d\.]/) &&
+      this.is.number(value) &&
+      value == Number.parseFloat(value).toString()
+    ) {
       return Number.parseFloat(value)
     } else {
       return decodeURIComponent(value)
@@ -546,6 +551,7 @@ class Skript {
    * 화면 구성요소에 이벤트를 걸어주는 숏컷함수
    * @param {(string | HTMLElement | NodeList)} selector - 대상을 선택하는 기준
    * @param {Function(any): void | AddActionOption} args - 추가옵션
+   * @param {HTMLElement | Document} baseElementOrDocument? 기준 엘리먼트
    * @example
    * ```javascript
    * // class-name 이라는 클래스를 가진 엘리먼트에 keyup(enter) 이벤트를 거치
@@ -566,6 +572,7 @@ class Skript {
   addAction(
     selector: string | HTMLElement | NodeList | Window | Document,
     args: Function | AddActionOption,
+    baseElementOrDocument?: HTMLElement,
   ) {
     // 두 번째 인자가 함수라면 이벤트 타입이 클릭으로 고정되는 축약형 호출임 (원래 두 번째 인자는 { 이벤트 타입, 콜백 } 형태의 객체)
     let options =
@@ -586,7 +593,10 @@ class Skript {
       options.eventType = options.eventType || 'click'
 
       // 타겟 확정 (셀렉터는 문자열 또는 엘리먼트 형태로 넘어올 수 있음)
-      const targets = this.getTargetsFromSelector(selector)
+      const targets = this.getTargetsFromSelector(
+        selector,
+        baseElementOrDocument,
+      )
 
       // 타겟 순회하면서 콜백 리스너를 거치
       for (var i = 0; i < targets.length; i++) {
@@ -602,7 +612,7 @@ class Skript {
               this: any,
               event: KeyboardEvent,
             ) {
-              if (event && event.keyCode === 13) {
+              if (event && event.key === 'Enter') {
                 options.callback.call(this, targets)
               }
             })
@@ -611,7 +621,7 @@ class Skript {
               this: any,
               event: KeyboardEvent,
             ) {
-              if (event && event.keyCode === 27) {
+              if (event && (event.key === 'Esc' || event.key === 'Escape')) {
                 options.callback.call(this, targets)
               }
             })
@@ -629,10 +639,11 @@ class Skript {
    * 브라우저 구성요소에 이벤트를 실행하는 숏컷함수
    * @param {(string | HTMLElement | NodeList)} selector - 대상을 선택하는 기준
    * @param {Function(any): void} func - 실행할 함수 구현
+   * @param {HTMLElement | Document} baseElementOrDocument? 기준 엘리먼트
    * @throws Error - 호출 인자값이 유효하지 않을 때 예외를 발생시킴
    * @example
    * ```javascript
-   * Skript.runAction('[data-is-new="true"]', function (targets) {
+   * Skript.runAction('[data-is-new="true"]', function (targets, index) {
    *    this.classList.add('new');
    *    console.log(targets.length);
    * });
@@ -641,14 +652,18 @@ class Skript {
   runAction(
     selector: string | HTMLElement | NodeList | Window | Document,
     func: Function,
+    baseElementOrDocument?: HTMLElement,
   ) {
     if (selector && func && this.is.function(func)) {
       // 타겟 확정 (셀렉터는 문자열 또는 엘리먼트 형태로 넘어올 수 있음)
-      const targets = this.getTargetsFromSelector(selector)
+      const targets = this.getTargetsFromSelector(
+        selector,
+        baseElementOrDocument,
+      )
 
       for (let i = 0; i < targets.length; i++) {
         const target = targets[i]
-        func.call(target, targets)
+        func.call(target, targets, i)
       }
     } else {
       throw new Error('대상 선택기준이 없거나 실행할 함수가 없습니다.')
@@ -658,11 +673,13 @@ class Skript {
   /**
    * 사용자 지정 셀렉터로부터 대상을 반환
    * @param {*} selector - 셀렉터 (문자열, 엘리먼트 자체, 엘리먼트 대상, 윈도우 객체, 도큐먼트 객체 등)
+   * @param {HTMLElement | Document} baseElementOrDocument? 기준 엘리먼트
    * @return {*} 셀렉팅 된 대상
    * @ignore
    */
   private getTargetsFromSelector(
     selector: string | HTMLElement | NodeList | Window | Document,
+    baseElementOrDocument?: HTMLElement | Document,
   ): any {
     let targets
     if (selector instanceof HTMLElement) {
@@ -674,7 +691,15 @@ class Skript {
     } else if (selector === 'document' || selector === document) {
       targets = [document]
     } else if (typeof selector === 'string') {
-      targets = document.querySelectorAll(selector || 'temp.not-exist-selector')
+      if (baseElementOrDocument instanceof HTMLElement) {
+        targets = baseElementOrDocument.querySelectorAll(
+          selector || 'temp.not-exist-selector',
+        )
+      } else {
+        targets = document.querySelectorAll(
+          selector || 'temp.not-exist-selector',
+        )
+      }
     } else {
       targets = selector
     }
@@ -1100,6 +1125,7 @@ class Skript {
    * 엘리먼트에서 JavaScript Object 인스턴스 추출 (extract 함수의 타입 축약형)
    * @param   {Element} element 폼데이터 인스턴스를 추출할 엘리먼트
    * @param   {*} appends 취합할 데이터(같은 이름 데이터가 element 하위에 있는 경우 appends 에 있는 값은 덮어씌워짐)
+   * @param   {boolean} includeEmptyValue 빈 값을 포함시킬지 여부
    * @return  Object
    * @example
    * ```javascript
@@ -1109,7 +1135,7 @@ class Skript {
    * })
    * ```
    **/
-  extractJson(element: Element, appends?: any) {
+  extractJson(element: Element, appends?: any, includeEmptyValue?: boolean) {
     // 대상 엘리먼트 하위 name 속성을 가진 요소를 조회
     const namedElements = element.querySelectorAll('[name]')
 
@@ -1127,7 +1153,10 @@ class Skript {
       elName = elName.replace('[]', '')
 
       // 2-3. 자식 엘리먼트 유형에 따른 분기 후 데이터 할당
-      if (el instanceof HTMLSelectElement && el.value && el.value != '') {
+      if (
+        el instanceof HTMLSelectElement &&
+        (includeEmptyValue || (el.value && el.value != ''))
+      ) {
         // 2-3-1. select 엘리먼트는 value 로 할당
         extracted[elName] = el.value
       } else if (el instanceof HTMLInputElement) {
@@ -1162,7 +1191,7 @@ class Skript {
           case 'date':
           case 'datetime':
           case 'datetime-local':
-            if (el.value && el.value != '') {
+            if (includeEmptyValue || (el.value && el.value != '')) {
               if (isMultiple) {
                 extracted[elName] = Array.isArray(extracted[elName])
                   ? extracted[elName]
@@ -1182,7 +1211,7 @@ class Skript {
           default:
         }
       } else if (el instanceof HTMLTextAreaElement) {
-        if (el.value && el.value != '') {
+        if (includeEmptyValue || (el.value && el.value != '')) {
           extracted[elName] = el.value
         }
       }
@@ -1204,7 +1233,16 @@ class Skript {
    * })
    * ```
    **/
-  extractFormData(element: Element, appends?: any) {
+  extractFormData(
+    element: Element,
+    appends?: any,
+    fileHandler?: (
+      fd: FormData,
+      name: string,
+      files: FileList | null,
+      element: HTMLInputElement,
+    ) => void,
+  ) {
     // 대상 엘리먼트 하위 name 속성을 가진 요소를 조회
     const namedElements = element.querySelectorAll('[name]')
 
@@ -1233,23 +1271,28 @@ class Skript {
       if (el instanceof HTMLSelectElement && el.value && el.value != '') {
         // 2-3-1. select 엘리먼트는 value 로 할당
         formData.append(elName, el.value)
-      } else if (el instanceof HTMLInputElement) {
+      } else if (
+        el instanceof HTMLInputElement ||
+        Object.getPrototypeOf(el).toString() == '[object HTMLInputElement]'
+      ) {
+        const inputElement = el as HTMLInputElement
+        
         switch ((el.getAttribute('type') || '').toLowerCase()) {
           // 2-3-2. checkbox 타입은 다중 name 일 경우 배열로, 단일 name 일 경우 단일 값으로 할당
           case 'checkbox':
-            if (el.checked) {
+            if (inputElement.checked) {
               if (isMultiple) {
-                formData.append(elName, el.value)
+                formData.append(elName, inputElement.value)
               } else {
                 formData.delete(elName)
-                formData.append(elName, el.value)
+                formData.append(elName, inputElement.value)
               }
             }
             break
           // 2-3-3. radio 타입은 checked 된 값을 전달
           case 'radio':
-            if (el.checked) {
-              formData.append(elName, el.value)
+            if (inputElement.checked) {
+              formData.append(elName, inputElement.value)
             }
             break
           // 2-3-4. text, password, email 타입은 값 그대로를 전달
@@ -1262,12 +1305,34 @@ class Skript {
           case 'date':
           case 'datetime':
           case 'datetime-local':
-            if (el.value && el.value != '') {
-              formData.append(elName, el.value)
+            if (inputElement.value && inputElement.value != '') {
+              formData.append(elName, inputElement.value)
             }
             break
-          // 2-3-6. file 타입은 추후 보완(퍼블팀 파일객체 컨트롤 모듈에 맞춰 대응)
+          // 2-3-6. file 타입은 추후 보완
           case 'file':
+            if (inputElement.files) {
+              fileCount += inputElement.files.length
+            }
+
+            if (fileHandler) {
+              fileHandler(formData, elName, inputElement.files, inputElement)
+            } else {
+              if (inputElement.files && inputElement.files.length > 0) {
+                if (inputElement.files.length > 1) {
+                  for (
+                    let index = 0;
+                    index < inputElement.files.length;
+                    index++
+                  ) {
+                    const file = inputElement.files[index]
+                    formData.append(`${elName}[${index}]`, file)
+                  }
+                } else {
+                  formData.append(elName, inputElement.files[0])
+                }
+              }
+            }
             break
           default:
         }
@@ -1902,7 +1967,7 @@ class Skript {
       selector: string | any[],
       filter?: (item: any, i?: number) => boolean,
     ): number {
-      if (!this.is.string(selector) && !selector.length) {
+      if (!this.app.is.string(selector) && !selector.length) {
         throw new Error(
           `'${selector}(${typeof selector})' - 유효한 셀렉터가 아닙니다.`,
         )
@@ -1916,7 +1981,7 @@ class Skript {
       let count = targets.length
 
       // 추가 필터 함수가 전달되었다면 실행
-      if (this.is.function(filter)) {
+      if (this.app.is.function(filter)) {
         count = 0
         // 타겟을 순회하며 필터에 해당하는 갯수를 센다
         for (let index = 0; index < targets.length; index++) {
@@ -1929,6 +1994,26 @@ class Skript {
 
       // 최종 갯수 반환
       return count
+    },
+
+    /**
+     * 셀렉터에 해당하는 value 획득
+     * @param {string} selector CSS 셀렉터
+     * @param {any=} defaultValue 엘리멘트가 없거나 값이 없을 때 반환할 기본값
+     * @returns {*}
+     * @example
+     * ```javascript
+     * // 'novalue'
+     * Skript.dom.getValue('[name="target"]', 'novalue');
+     * ```
+     */
+    getValue(selector: string, defaultValue: any = null): any {
+      const targetEl: HTMLInputElement | null = document.querySelector(selector)
+      if (targetEl) {
+        return targetEl.value ? targetEl.value : defaultValue
+      } else {
+        return defaultValue
+      }
     },
   }
 

@@ -1,8 +1,8 @@
 {
   "name": "@owneul/skript",
-  "version": "1.0.0",
+  "version": "1.0.17",
   "description": "javascript Helper Script Library for Web Developers.",
-  "main": "dist/Skript.js",
+  "main": "./dist/Script.min.js",
   "keywords": [
     "javascript",
     "web developer",
@@ -13,7 +13,10 @@
   ],
   "repository": "https://github.com/kei155/Skript.js.git",
   "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc && npm run minify",
     "start": "typedoc --plugin typedoc-plugin-markdown && parcel Skript.ts",
+    "minify": "./node_modules/.bin/uglifyjs --compress --mangle --output ./dist/Skript.min.js -- ./dist/Skript.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Keideaness <owneul@gmail.com>",
@@ -21,6 +24,8 @@
   "devDependencies": {
     "typedoc": "^0.20.36",
     "typedoc-plugin-markdown": "^3.8.1",
+    "uglify-js": "^3.13.7",
+    "minify": "^7.0.2",
     "typescript": "^4.2.4"
   },
   "dependencies": {
