@@ -578,8 +578,8 @@ class Skript {
     let options =
       typeof args === 'function'
         ? ({
-            callback: args as Function,
-          } as AddActionOption)
+          callback: args as Function,
+        } as AddActionOption)
         : args || ({} as AddActionOption)
 
     // 인자가 갖춰졌을 때에만 실행
@@ -1276,7 +1276,7 @@ class Skript {
         Object.getPrototypeOf(el).toString() == '[object HTMLInputElement]'
       ) {
         const inputElement = el as HTMLInputElement
-        
+
         switch ((el.getAttribute('type') || '').toLowerCase()) {
           // 2-3-2. checkbox 타입은 다중 name 일 경우 배열로, 단일 name 일 경우 단일 값으로 할당
           case 'checkbox':
@@ -1340,6 +1340,8 @@ class Skript {
         if (el.value && el.value != '') {
           formData.append(elName, el.value)
         }
+      } else if (el instanceof HTMLElement && el.hasAttribute('contenteditable')) {
+        formData.append(elName, el.innerText)
       }
     }
 
@@ -1579,7 +1581,7 @@ class Skript {
       tester: () => true,
 
       // 종료 메소드가 할당되지 않으면 기본 처리
-      endHandler: () => {},
+      endHandler: () => { },
 
       // 지정된 액션을 실행
       do: function (action: (count?: number) => void) {
@@ -1680,7 +1682,7 @@ class Skript {
           clearInterval(intervalId)
           throw new Error(
             `Unexpected Type [${typeof checkTargetConfirmed[
-              index
+            index
             ]}] : 문자열 또는 boolean을 반환하는 함수여야합니다.`,
           )
         }
@@ -1834,7 +1836,7 @@ class Skript {
           this.value = this.value.replace(/[^ㄱ-ㅎ가-힣ㅏ-ㅣ\x20]/g, '')
         }
 
-        let callback = function () {}
+        let callback = function () { }
         switch (('' + type).toLowerCase()) {
           case 'number':
             callback = onlyNumber

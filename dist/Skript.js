@@ -925,6 +925,9 @@ var Skript = (function () {
                     formData.append(elName, el.value);
                 }
             }
+            else if (el instanceof HTMLElement && el.hasAttribute('contenteditable')) {
+                formData.append(elName, el.innerText);
+            }
         }
         if (fileCount > 0) {
             var metadata = {

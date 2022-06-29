@@ -1,6 +1,6 @@
 {
   "name": "@owneul/skript",
-  "version": "1.0.17",
+  "version": "1.0.19",
   "description": "javascript Helper Script Library for Web Developers.",
   "main": "./dist/Script.min.js",
   "keywords": [
