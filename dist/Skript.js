@@ -2,115 +2,11 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Skript = void 0;
-var axios_1 = __importDefault(require("axios"));
-require("weakmap-polyfill");
-require("formdata-polyfill");
-require("promise-polyfill");
 var md5_1 = __importDefault(require("md5"));
-var MMDate_1 = require("./MMDate");
-axios_1.default.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-axios_1.default.interceptors.response.use(function (res) {
-    if (typeof res.data === 'string' &&
-        (res.headers['content-type'] || '').indexOf('application/json') !== -1) {
-        res.data = JSON.parse(res.data);
-    }
-    return res;
-});
 var Skript = (function () {
     function Skript() {
-        this.editors = {};
-        this.isInitialized = false;
-        this.initializePromise = null;
-        this._loadRouteEndpoint = '/common/routes';
-        this.ajax = {
-            _app: this,
-            get: axios_1.default.get,
-            post: axios_1.default.post,
-            put: function (url, data, config) {
-                if (data instanceof FormData) {
-                    data.append('_method', 'PUT');
-                }
-                else if (typeof data === 'object') {
-                    data._method = 'PUT';
-                }
-                return axios_1.default.post(url, data, config);
-            },
-            delete: function (url, config) {
-                return axios_1.default.post(url, {
-                    _method: 'DELETE',
-                }, config);
-            },
-        };
-        this.is = {
-            number: function (value) {
-                return !isNaN(Number.parseFloat(value));
-            },
-            array: function (value) {
-                return Array.isArray(value);
-            },
-            null: function (value) {
-                return value === null;
-            },
-            undefined: function (value) {
-                return value === undefined;
-            },
-            empty: function (value) {
-                if (this.undefined(value)) {
-                    return true;
-                }
-                else if (this.null(value)) {
-                    return true;
-                }
-                else if (this.array(value) && value.length === 0) {
-                    return true;
-                }
-                else if (typeof value === 'object' && JSON.stringify(value) === '{}') {
-                    return true;
-                }
-                else if (this.string(value) && value.replace(/\s/g, '').length === 0) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            },
-            function: function (value) {
-                return typeof value === 'function';
-            },
-            string: function (value) {
-                return typeof value === 'string';
-            },
-        };
         this.dom = {
             app: this,
-            inputOnly: function (targetElement, type, onKeyup) {
-                if (onKeyup === void 0) { onKeyup = false; }
-                if (targetElement instanceof HTMLInputElement ||
-                    targetElement instanceof HTMLTextAreaElement) {
-                    var onlyNumber = function () {
-                        this.value = this.value.replace(/[^0-9]/g, '');
-                    };
-                    var onlyKorean = function () {
-                        this.value = this.value.replace(/[^ㄱ-ㅎ가-힣ㅏ-ㅣ\x20]/g, '');
-                    };
-                    var callback = function () { };
-                    switch (('' + type).toLowerCase()) {
-                        case 'number':
-                            callback = onlyNumber;
-                            break;
-                        case 'korean':
-                            callback = onlyKorean;
-                        default:
-                            break;
-                    }
-                    this.app.addAction(targetElement, {
-                        eventType: onKeyup === true ? 'keyup' : 'change',
-                        callback: callback,
-                    });
-                }
-            },
             pluckValue: function (cssSelector, filter) {
                 var result = [];
                 var targets = document.querySelectorAll(cssSelector);
@@ -141,14 +37,14 @@ var Skript = (function () {
                 return result;
             },
             count: function (selector, filter) {
-                if (!this.app.is.string(selector) && !selector.length) {
+                if (typeof selector !== 'string' && !selector.length) {
                     throw new Error("'" + selector + "(" + typeof selector + ")' - \uC720\uD6A8\uD55C \uC140\uB809\uD130\uAC00 \uC544\uB2D9\uB2C8\uB2E4.");
                 }
                 var targets = typeof selector === 'string'
                     ? document.querySelectorAll(selector)
                     : selector;
                 var count = targets.length;
-                if (this.app.is.function(filter)) {
+                if (typeof filter == 'function') {
                     count = 0;
                     for (var index = 0; index < targets.length; index++) {
                         var target = targets[index];
@@ -249,7 +145,7 @@ var Skript = (function () {
                 if (limitMark === void 0) { limitMark = '...'; }
                 value = '' + value;
                 if (value.length > limitLength) {
-                    return value.substr(0, limitLength) + limitMark;
+                    return value.substring(0, limitLength) + limitMark;
                 }
                 else {
                     return value;
@@ -259,7 +155,7 @@ var Skript = (function () {
                 if (limitMark === void 0) { limitMark = '...'; }
                 value = '' + value;
                 if (value.length > limitLength) {
-                    return limitMark + value.substr(value.length - limitLength);
+                    return limitMark + value.substring(value.length - limitLength);
                 }
                 else {
                     return value;
@@ -297,72 +193,15 @@ var Skript = (function () {
                 }
             },
             left: function (text, length) {
-                return text.substr(0, length);
+                return ('' + text).substring(0, length);
             },
             right: function (text, length) {
                 text = '' + text;
-                return text.substr(text.length - length, length);
+                return text.substring(text.length - length, length);
             },
         };
-        this.routes = [];
         this.md5 = md5_1.default;
-        this.pageScripts = {
-            common: {},
-        };
-        this.callbacks = {};
-        this.vues = {};
-        this.instanceCreatedAt = new Date();
     }
-    Skript.prototype.getRouteParamsByName = function (routeName, pathname) {
-        var route = this.routes.find(function (route) { return route.name === routeName; });
-        if (!route) {
-            throw new Error('해당 라우트 정보를 찾을 수 없습니다.');
-        }
-        var path = pathname || location.pathname;
-        return this.getRouteParams(route.path, path);
-    };
-    Skript.prototype.getRouteParams = function (pattern, pathname) {
-        var path = pathname || location.pathname;
-        var paramKeyValue = {};
-        var splitedPathname = path.replace(/^\//, '').split('/');
-        while (pattern.match(/\.\.\.\d/)) {
-            var match = pattern.match(/\.\.\.\d/);
-            if (match !== null) {
-                var skipCount = Number.parseInt(match[0].replace(/^\.\.\./, ''));
-                var pos = match.index;
-                var placeholders = [];
-                for (var index = 0; index < skipCount; index++) {
-                    placeholders.push('{_}');
-                }
-                var before = pattern.substring(0, pos);
-                var after = pattern.substring(pos + match[0].length);
-                pattern = [before, placeholders.join('/'), after].join('');
-            }
-        }
-        pattern
-            .replace(/^\//, '')
-            .split('/')
-            .forEach(function (section, index) {
-            if (section !== '{_}' &&
-                section.includes('{') &&
-                section.includes('}') &&
-                splitedPathname[index]) {
-                paramKeyValue[section.replace(/^{/, '').replace(/}$/, '')] =
-                    splitedPathname[index];
-            }
-        });
-        return paramKeyValue;
-    };
-    Skript.prototype.getRouteParamAt = function (position, pathname) {
-        var path = pathname || location.pathname;
-        var splitedPathname = path.replace(/^\//, '').split('/');
-        if (position < 0) {
-            return splitedPathname[splitedPathname.length + position] || null;
-        }
-        else {
-            return splitedPathname[position] || null;
-        }
-    };
     Skript.prototype.getQueryParam = function (paramKey, querystring) {
         var query = querystring || location.search;
         var params = this.getQueryParams(query);
@@ -395,8 +234,8 @@ var Skript = (function () {
             .map(function (pairString) {
             var indexOfFirstEqualChar = pairString.indexOf('=');
             var splited = [
-                pairString.substr(0, indexOfFirstEqualChar),
-                pairString.substr(indexOfFirstEqualChar + 1),
+                pairString.substring(0, indexOfFirstEqualChar),
+                pairString.substring(indexOfFirstEqualChar + 1),
             ];
             var key = decodeURIComponent(splited[0]);
             var value = splited[1] || '';
@@ -463,7 +302,7 @@ var Skript = (function () {
         }
         else if (!value.match(/^0/) &&
             !value.match(/[^\d\.]/) &&
-            this.is.number(value) &&
+            !isNaN(Number.parseFloat(value)) &&
             value == Number.parseFloat(value).toString()) {
             return Number.parseFloat(value);
         }
@@ -523,7 +362,7 @@ var Skript = (function () {
         }
     };
     Skript.prototype.runAction = function (selector, func, baseElementOrDocument) {
-        if (selector && func && this.is.function(func)) {
+        if (selector && func && typeof func == 'function') {
             var targets = this.getTargetsFromSelector(selector, baseElementOrDocument);
             for (var i = 0; i < targets.length; i++) {
                 var target = targets[i];
@@ -764,10 +603,10 @@ var Skript = (function () {
             dataType: 'json',
             appends: {},
         };
-        if (this.is.null(element)) {
+        if (element === null) {
             throw new Error('대상 엘리먼트가 존재하지 않습니다.');
         }
-        else if (!this.is.string(opt.dataType)) {
+        else if (typeof opt.dataType !== 'string') {
             throw new Error('반환 데이터 타입이 유효하지 않습니다');
         }
         if (opt.dataType.toLowerCase() === 'json') {
@@ -1111,25 +950,6 @@ var Skript = (function () {
             return v.toString(16);
         });
     };
-    Skript.prototype.setServerNowDatetime = function (serverNowDatetime) {
-        var serverNowDate;
-        if (typeof serverNowDatetime === 'string') {
-            serverNowDate = new Date(serverNowDatetime);
-            if (isNaN(serverNowDate.getTime())) {
-                throw new Error("Date \uD0C0\uC785\uC73C\uB85C \uBCC0\uD658\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. (" + serverNowDatetime + ")");
-            }
-        }
-        else {
-            serverNowDate = serverNowDatetime;
-        }
-        var nowDate = new Date();
-        var intervalNowToInstanceCreatedAt = nowDate.getTime() - this.instanceCreatedAt.getTime();
-        var intervalInstanceCreatedAtToServerNowDatetime = this.instanceCreatedAt.getTime() - serverNowDate.getTime();
-        this.diffInTimeServerToScript =
-            intervalNowToInstanceCreatedAt +
-                intervalInstanceCreatedAtToServerNowDatetime;
-        this.serverNowDatetime = serverNowDate;
-    };
     Skript.prototype.countdown = function (targetDatetime, intervalType, countdownHandler, excuteOnInitialized) {
         var _this = this;
         if (excuteOnInitialized === void 0) { excuteOnInitialized = false; }
@@ -1199,120 +1019,6 @@ var Skript = (function () {
             }
         });
     };
-    Skript.prototype.loadRoutes = function () {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            _this.ajax
-                .get(_this._loadRouteEndpoint)
-                .then(function (res) {
-                resolve(res.data.routeList);
-            })
-                .catch(reject);
-        });
-    };
-    Skript.prototype.route = function (name, parameters) {
-        var routeData = this.routes.find(function (route) { return route.name === name; });
-        if (routeData === undefined) {
-            throw new Error('해당 라우트를 찾을 수 없습니다.');
-        }
-        var resultPath = routeData.path;
-        var routeParamNames = [];
-        if (Array.isArray(routeData.routeParameters)) {
-            var requires = routeData.routeParameters.filter(function (route) { return route.isOptional === false; });
-            requires.forEach(function (r) {
-                if ((parameters || {})[r.name] === null ||
-                    (parameters || {})[r.name] === undefined) {
-                    throw new Error("\uD544\uC218 \uD30C\uB77C\uBBF8\uD130(" + r.name + ")\uAC00 \uB204\uB77D\uB418\uC5C8\uC2B5\uB2C8\uB2E4.");
-                }
-            });
-            var match = resultPath.match(/{([^}]*)}/);
-            while (match) {
-                routeParamNames.push(match[1]);
-                var replaceValue = (parameters || {})[match[1]];
-                resultPath = resultPath.replace(match[0], replaceValue);
-                match = resultPath.match(/{([^}]*)}/);
-            }
-        }
-        var queryPairs = [];
-        if (parameters) {
-            var _loop_1 = function (key) {
-                if (parameters.hasOwnProperty(key)) {
-                    if (routeParamNames.find(function (rpn) { return rpn === key; }) === undefined) {
-                        queryPairs.push(key + "=" + parameters[key]);
-                    }
-                }
-            };
-            for (var key in parameters) {
-                _loop_1(key);
-            }
-        }
-        var makedPath = '/' + resultPath.replace(/^\//, '').replace(/\/$/, '');
-        if (queryPairs.length > 0) {
-            makedPath = makedPath + '?' + queryPairs.join('&');
-        }
-        return makedPath;
-    };
-    Skript.prototype.init = function (initializer) {
-        var _this = this;
-        if (this.initializePromise !== null) {
-            return this.initializePromise;
-        }
-        this.initializePromise = new Promise(function (resolve, reject) {
-            try {
-                if (_this.isInitialized) {
-                    if (document.readyState == 'complete') {
-                        resolve(_this);
-                    }
-                    else {
-                        window.addEventListener('load', function () {
-                            resolve(_this);
-                        });
-                    }
-                }
-                else {
-                    var isFetched = true;
-                    if (!sessionStorage.getItem('routes') ||
-                        !sessionStorage.getItem('routeFetchedAt') ||
-                        new MMDate_1.MMDate().isAfterOrEqual(new MMDate_1.MMDate(sessionStorage.getItem('routeFetchedAt')).after(5, 'minutes'), 'minutes')) {
-                        isFetched = false;
-                    }
-                    var promised = void 0;
-                    if (isFetched) {
-                        promised = Promise.resolve().then(function () {
-                            _this.routes = JSON.parse(sessionStorage.getItem('routes'));
-                        });
-                    }
-                    else {
-                        promised = _this.loadRoutes().then(function (routes) {
-                            sessionStorage.setItem('routes', JSON.stringify(routes));
-                            sessionStorage.setItem('routeFetchedAt', new MMDate_1.MMDate().format());
-                            _this.routes = routes;
-                        });
-                    }
-                    promised
-                        .then(function () {
-                        if (initializer && typeof initializer === 'function') {
-                            initializer(_this);
-                        }
-                        _this.isInitialized = true;
-                        if (document.readyState == 'complete') {
-                            resolve(_this);
-                        }
-                        else {
-                            window.addEventListener('load', function () {
-                                resolve(_this);
-                            });
-                        }
-                    })
-                        .catch(reject);
-                }
-            }
-            catch (error) {
-                reject(error);
-            }
-        });
-        return this.initializePromise;
-    };
     return Skript;
 }());
-exports.Skript = Skript;
+module.exports = Skript;

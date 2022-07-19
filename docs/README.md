@@ -1,6 +1,4 @@
-[@owneul/skript](README.md) › [Globals](globals.md)
-
-# @owneul/skript
+@owneul/skript / [Exports](modules.md)
 
 # Skript.js
 

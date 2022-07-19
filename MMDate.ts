@@ -260,4 +260,4 @@ class MMDate {
   }
 }
 
-export { MMDate }
+export = MMDate

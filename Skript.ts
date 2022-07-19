@@ -1,24 +1,5 @@
-import axios from 'axios'
-import 'weakmap-polyfill'
-import 'formdata-polyfill'
-import 'promise-polyfill'
 import md5 from 'md5'
-import { MMDate } from './MMDate'
-
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-
-axios.interceptors.response.use((res) => {
-  // 응답 컨텐트 타입이 json인데 본문이 문자열인 경우 한 번 파싱해줌
-  if (
-    typeof res.data === 'string' &&
-    ((res.headers['content-type'] as string) || '').indexOf(
-      'application/json',
-    ) !== -1
-  ) {
-    res.data = JSON.parse(res.data)
-  }
-  return res
-})
+import MMDate from './MMDate'
 
 /**
  * 문자열 키와 문자열 값을 갖는 집합체
@@ -108,177 +89,10 @@ interface Tick {
  * 애플리케이션 스케일 클래스
  * @class
  * @classdesc 애플리케이션에서 사용하는 스크립트에 대한 관리를 총괄
- * @requires module:axios
  * @requires module:md5
  * @requires module:MMDate
  */
 class Skript {
-  constructor() {
-    this.instanceCreatedAt = new Date()
-  }
-
-  /**
-   * 에디터 관리 객체
-   */
-  editors: {} = {}
-
-  /**
-   * 인스턴스 생성된 시간
-   */
-  instanceCreatedAt: Date
-
-  /**
-   * 서버에서 전달해준 현재시간
-   */
-  serverNowDatetime?: Date
-
-  /**
-   * 서버시간과 서버시간 확정 스크립트 실행까지의 간격
-   */
-  diffInTimeServerToScript?: number
-
-  /**
-   * 앱 인스턴스 초기화 완료 여부
-   */
-  isInitialized: boolean = false
-  initializePromise: Promise<any> | null = null
-
-  /**
-   * route fetch endpoint
-   */
-  _loadRouteEndpoint: string = '/common/routes'
-
-  /**
-   * 라우트 이름으로 파라미터를 추출
-   * @param {string} routeName 분석에 사용할 라우트 이름
-   * @param {string=} pathname 분석대상이 될 경로 (미지정시 location.pathname 을 사용합니다)
-   * @return {RouteParameters} 해체분석된 결과 데이터 객체
-   * @example
-   * ```javascript
-   * // Skript.route('sample.develop.detail') 의 path 값이 /sample/develop/{id}/{action} 이며
-   * // 현재 location.pathname 이 https://example.com/sample/develop/1664/edit 인 경우
-   * // return { id: '1664', action: 'edit' }
-   * Skript.getRouteParamsByName('sample.develop.detail')
-   * ```
-   */
-  getRouteParamsByName(routeName: string, pathname?: string): RouteParameters {
-    const route = this.routes.find((route) => route.name === routeName)
-    if (!route) {
-      throw new Error('해당 라우트 정보를 찾을 수 없습니다.')
-    }
-
-    const path = pathname || location.pathname
-
-    return this.getRouteParams(route.path, path)
-  }
-
-  /**
-   * 라우트 파라미터 조회
-   * @param {string} pattern - 분석에 사용할 패턴
-   * @param {string=} pathname - 분석대상이 될 경로 (미지정시 location.pathname 을 사용합니다)
-   * @return {RouteParameters} 해체분석된 결과 데이터 객체
-   * @example
-   * ```javascript
-   * // 패턴에 맞춰 해체결과 객체를 반환
-   * // return { type: 'goods', goodsId: '411', action: 'edit' }
-   * Skript.getRouteParams('/{type}/{goodsId}/{action}', '/goods/411/edit')
-   *
-   * // 사용하지 않을 파라미터는 생략가능
-   * // n만큼 건너뛰기
-   * // return { fileName: 'c', fileId: 'f' }
-   * Skript.getRouteParams('/...2/{fileName}/...2/{fileId}', '/a/b/c/d/e/f/g');
-   * // '{_}' 패턴을 사용해 명시적 생략
-   * // return { fileId: 'd' }
-   * Skript.getRouteParams('/{_}/{_}/{_}/{fileId}', '/a/b/c/d/e/f/g')
-   * ```
-   */
-  getRouteParams(pattern: string, pathname?: string): RouteParameters {
-    const path = pathname || location.pathname
-
-    // 해체분석 결과를 담을 객체를 생성
-    const paramKeyValue: RouteParameters = {}
-
-    // path를 섹션으로 분리
-    const splitedPathname = path.replace(/^\//, '').split('/')
-
-    // 생략패턴(...n)이 매칭되는 동안 반복실행
-    while (pattern.match(/\.\.\.\d/)) {
-      // 정규식 매칭 실행
-      const match = pattern.match(/\.\.\.\d/)
-
-      // 매칭된 값이 있다면
-      if (match !== null) {
-        // 건너뛰어야 하는 수를 받아오기 (...n의 n값)
-        const skipCount = Number.parseInt(match[0].replace(/^\.\.\./, ''))
-
-        // 생략패턴이 발견된 위치값을 확정
-        const pos = match.index!
-
-        // 생략횟수만큼 명시적 생략세션('{_}')으로 대체시켜주기 위해 배열 생성
-        let placeholders = []
-        for (let index = 0; index < skipCount; index++) {
-          placeholders.push('{_}')
-        }
-
-        // 생략패턴 전까지의 값
-        const before = pattern.substring(0, pos)
-
-        // 생략패턴 이후의 값
-        const after = pattern.substring(pos + match[0].length)
-
-        // 생략패턴을 명시적 생략세션으로 대체해 재조합
-        pattern = [before, placeholders.join('/'), after].join('')
-      }
-    }
-
-    // 패턴 분할
-    pattern
-      .replace(/^\//, '')
-      .split('/')
-      .forEach((section, index) => {
-        // 해체된 path 에 section 위치 값이 있다면 지정해줌
-        if (
-          section !== '{_}' &&
-          section.includes('{') &&
-          section.includes('}') &&
-          splitedPathname[index]
-        ) {
-          paramKeyValue[section.replace(/^{/, '').replace(/}$/, '')] =
-            splitedPathname[index]
-        }
-      })
-
-    // 해체분석결과 반환
-    return paramKeyValue
-  }
-
-  /**
-   * 특정 위치의 라우트 파라미터를 획득
-   * @param {number} position - 조회할 위치값(음수의 경우 마지막부터 조회 : -1이 가장 뒤, -2는 뒤에서 두 번째)
-   * @param {string=} pathname - 분석대상이 될 경로 (미지정시 location.pathname 을 사용합니다)
-   * @return {(string | null)} 해당 위치의 값
-   * @example
-   * ```javascript
-   * // return 'best'
-   * Skript.getRouteParamAt(3, '/goods/brand/130/best');
-   *
-   * // return '130'
-   * Skript.getRouteParamAt(-2, '/goods/brand/130/best');
-   * ```
-   */
-  getRouteParamAt(position: number, pathname?: string): string | null {
-    const path = pathname || location.pathname
-    const splitedPathname = path.replace(/^\//, '').split('/')
-
-    if (position < 0) {
-      // 요청 위치값이 음수라면 뒤에서부터 확인
-      return splitedPathname[splitedPathname.length + position] || null
-    } else {
-      // 요청 위치값이 양수라면 앞에서부터 확인
-      return splitedPathname[position] || null
-    }
-  }
-
   /**
    * 쿼리스트링의 특정 키값을 조회
    * @param {string} paramKey - 조회할 쿼리스트링 키
@@ -361,8 +175,8 @@ class Skript {
         // 페어 문자열 분할(key=value -> ['key', 'value'])
         const indexOfFirstEqualChar = pairString.indexOf('=')
         const splited = [
-          pairString.substr(0, indexOfFirstEqualChar),
-          pairString.substr(indexOfFirstEqualChar + 1),
+          pairString.substring(0, indexOfFirstEqualChar),
+          pairString.substring(indexOfFirstEqualChar + 1),
         ]
 
         let key = decodeURIComponent(splited[0])
@@ -464,7 +278,7 @@ class Skript {
     } else if (
       !value.match(/^0/) &&
       !value.match(/[^\d\.]/) &&
-      this.is.number(value) &&
+      !isNaN(Number.parseFloat(value)) &&
       value == Number.parseFloat(value).toString()
     ) {
       return Number.parseFloat(value)
@@ -517,34 +331,6 @@ class Skript {
     }
 
     return copy
-  }
-
-  /**
-   * ajax 요청용 랩핑 프로퍼티
-   */
-  ajax: any = {
-    _app: this,
-    get: axios.get,
-    post: axios.post,
-    put(url: string, data?: any, config?: any) {
-      if (data instanceof FormData) {
-        data.append('_method', 'PUT')
-      } else if (typeof data === 'object') {
-        data._method = 'PUT'
-      }
-      // HTTP 메소드 사용불가로 post 방식 우회적용
-      return axios.post(url, data, config)
-    },
-    delete(url: string, config?: any) {
-      // HTTP 메소드 사용불가로 post 방식 우회적용
-      return axios.post(
-        url,
-        {
-          _method: 'DELETE',
-        },
-        config,
-      )
-    },
   }
 
   /**
@@ -654,7 +440,7 @@ class Skript {
     func: Function,
     baseElementOrDocument?: HTMLElement,
   ) {
-    if (selector && func && this.is.function(func)) {
+    if (selector && func && typeof func == 'function') {
       // 타겟 확정 (셀렉터는 문자열 또는 엘리먼트 형태로 넘어올 수 있음)
       const targets = this.getTargetsFromSelector(
         selector,
@@ -1106,9 +892,9 @@ class Skript {
     }
 
     // 추출 대상 엘리먼트가 존재하지 않으면 예외처리
-    if (this.is.null(element)) {
+    if (element === null) {
       throw new Error('대상 엘리먼트가 존재하지 않습니다.')
-    } else if (!this.is.string(opt.dataType)) {
+    } else if (typeof opt.dataType !== 'string') {
       throw new Error('반환 데이터 타입이 유효하지 않습니다')
     }
 
@@ -1202,11 +988,8 @@ class Skript {
               }
             }
             break
-          // 2-3-6. file 타입은 추후 보완(퍼블팀 파일객체 컨트롤 모듈에 맞춰 대응)
+          // 2-3-6. file 타입 json 변환은 .. 
           case 'file':
-            //if (el.files && el.files[0]) {
-            //    formData.append(elName, el.files[0]);
-            //}
             break
           default:
         }
@@ -1714,81 +1497,6 @@ class Skript {
   }
 
   /**
-   * is 체크를 할 수 있는 테스터 객체
-   */
-  is: any = {
-    /**
-     * 숫자 또는 숫자로 변환할 수 있는 값인지 체크
-     * @param {*} value
-     * @returns {boolean}
-     */
-    number(value: any): boolean {
-      return !isNaN(Number.parseFloat(value))
-    },
-    /**
-     * 주어진 값이 배열인지 체크
-     * @param {*} value
-     * @returns {boolean}
-     */
-    array(value: any): boolean {
-      return Array.isArray(value)
-    },
-    /**
-     * 주어진 값이 null 인지 체크
-     * @param {*} value
-     * @returns {boolean}
-     */
-    null(value: any): boolean {
-      return value === null
-    },
-    /**
-     * 주어진 값이 undefined 인지 체크
-     * @param {*} value
-     * @returns {boolean}
-     */
-    undefined(value: any): boolean {
-      return value === undefined
-    },
-    /**
-     * 주어진 값이 비어있는지 체크
-     * null, undefined, 빈 배열, 빈 오브젝트({}), 빈 문자열, 공백으로만 이루어진 문자열에 true 값을 반환
-     * @param {*} value
-     * @returns {boolean}
-     */
-    empty(value: any): boolean {
-      if (this.undefined(value)) {
-        return true
-      } else if (this.null(value)) {
-        return true
-      } else if (this.array(value) && value.length === 0) {
-        return true
-      } else if (typeof value === 'object' && JSON.stringify(value) === '{}') {
-        return true
-      } else if (this.string(value) && value.replace(/\s/g, '').length === 0) {
-        return true
-      } else {
-        return false
-      }
-    },
-    /**
-     * 주어진 값이 함수인지 체크
-     * @param {*} value
-     * @returns {boolean}
-     */
-    function(value: any): boolean {
-      return typeof value === 'function'
-    },
-    /**
-     * 주어진 값이 문자열인지 체크
-     * @param {*} value
-     * @returns {boolean}
-     */
-    string(value: any): boolean {
-      return typeof value === 'string'
-    },
-  }
-
-  /**
    * dom 관련 헬퍼함수
    */
   dom: any = {
@@ -1796,63 +1504,6 @@ class Skript {
      * @var Skript
      */
     app: this,
-
-    /**
-     *
-     * @param {HTMLElement} targetElement 대상 엘리먼트
-     * @param {string} type 제한타입(number: 숫자만, korean: 한글만)
-     * @param {boolean} onKeyup 이벤트 시점을 keyup으로 적용할지 여부(기본은 change 시점 검사)
-     * @example
-     * ```html
-     * <input type="text" id="input_element" />
-     * ```
-     * ```javascript
-     * // 숫자만 입력할 수 있도록 제한
-     * var targetElement = document.getElementById('input_element');
-     * Skript.dom.inputOnly(targetElement, 'number');
-     *
-     * // 숫자만 입력할 수 있도록 제한(keyup)
-     * Skript.dom.inputOnly(targetElement, 'number', true);
-     * ```
-     */
-    inputOnly(
-      targetElement: HTMLElement,
-      type: string,
-      onKeyup: boolean = false,
-    ): void {
-      if (
-        targetElement instanceof HTMLInputElement ||
-        targetElement instanceof HTMLTextAreaElement
-      ) {
-        const onlyNumber = function (
-          this: HTMLInputElement | HTMLTextAreaElement,
-        ) {
-          this.value = this.value.replace(/[^0-9]/g, '')
-        }
-
-        const onlyKorean = function (
-          this: HTMLInputElement | HTMLTextAreaElement,
-        ) {
-          this.value = this.value.replace(/[^ㄱ-ㅎ가-힣ㅏ-ㅣ\x20]/g, '')
-        }
-
-        let callback = function () { }
-        switch (('' + type).toLowerCase()) {
-          case 'number':
-            callback = onlyNumber
-            break
-          case 'korean':
-            callback = onlyKorean
-          default:
-            break
-        }
-
-        this.app.addAction(targetElement, {
-          eventType: onKeyup === true ? 'keyup' : 'change',
-          callback: callback,
-        })
-      }
-    },
 
     /**
      *
@@ -1886,6 +1537,7 @@ class Skript {
         if (typeof filter == 'function' && filter(el) !== true) {
           return
         }
+
         if (
           el instanceof HTMLInputElement ||
           el instanceof HTMLTextAreaElement ||
@@ -1934,6 +1586,7 @@ class Skript {
         if (typeof filter == 'function' && filter(el) !== true) {
           return
         }
+
         result.push(el.getAttribute(attributeName))
       })
 
@@ -1969,7 +1622,7 @@ class Skript {
       selector: string | any[],
       filter?: (item: any, i?: number) => boolean,
     ): number {
-      if (!this.app.is.string(selector) && !selector.length) {
+      if (typeof selector !== 'string' && !selector.length) {
         throw new Error(
           `'${selector}(${typeof selector})' - 유효한 셀렉터가 아닙니다.`,
         )
@@ -1983,7 +1636,7 @@ class Skript {
       let count = targets.length
 
       // 추가 필터 함수가 전달되었다면 실행
-      if (this.app.is.function(filter)) {
+      if (typeof filter == 'function') {
         count = 0
         // 타겟을 순회하며 필터에 해당하는 갯수를 센다
         for (let index = 0; index < targets.length; index++) {
@@ -2076,7 +1729,7 @@ class Skript {
     /**
      * 주어진 문자열에 해당 배열의 값이 모두 존재하는지 체크
      * @param {string} value 검사 대상 문자열
-     * @param {string[]} check 검사할 배열
+     * @param {string[]} checks 검사할 배열
      * @returns {boolean}
      * @example
      * ```javascript
@@ -2103,7 +1756,7 @@ class Skript {
     /**
      * 주어진 문자열에 해당 배열의 값중에 하나라도 존재하는지 체크
      * @param {string} value 검사 대상 문자열
-     * @param {string[]} check 검사할 배열
+     * @param {string[]} checks 검사할 배열
      * @returns {boolean}
      * @example
      * ```javascript
@@ -2255,7 +1908,7 @@ class Skript {
       value = '' + value
 
       if (value.length > limitLength) {
-        return value.substr(0, limitLength) + limitMark
+        return value.substring(0, limitLength) + limitMark
       } else {
         return value
       }
@@ -2282,7 +1935,7 @@ class Skript {
       value = '' + value
 
       if (value.length > limitLength) {
-        return limitMark + value.substr(value.length - limitLength)
+        return limitMark + value.substring(value.length - limitLength)
       } else {
         return value
       }
@@ -2408,7 +2061,7 @@ class Skript {
      * ```
      */
     left(text: string, length: number): string {
-      return text.substr(0, length)
+      return ('' + text).substring(0, length)
     },
 
     /**
@@ -2424,51 +2077,8 @@ class Skript {
      */
     right(text: string, length: number): string {
       text = '' + text
-      return text.substr(text.length - length, length)
+      return text.substring(text.length - length, length)
     },
-  }
-
-  /**
-   * 앱 스크립트 인스턴스에 서버 현재시간을 반영
-   * 서버의 시간과 클라이언트의 시간 사이에 발생하는 차이를 잡기 위해 사용하는 메소드.
-   * 앱 인스턴스 생성 시간과 서버의 현재시간, 서버 시간을 적용하는 시점의 시간을 보정해야 함
-   * (현재 구성만 잡아놓고 실제 보정로직 완료되지 않았음)
-   * @param {(Date | string)} serverNowDatetime 서버에서 발생한 현재시간값
-   * @throws Error serverNowDatetime이 Date 타입으로 변경 불가능한 경우 예외를 발생시킴
-   */
-  setServerNowDatetime(serverNowDatetime: Date | string): void {
-    // Date 타입으로 확정보정
-    let serverNowDate
-    if (typeof serverNowDatetime === 'string') {
-      serverNowDate = new Date(serverNowDatetime)
-
-      if (isNaN(serverNowDate.getTime())) {
-        throw new Error(
-          `Date 타입으로 변환할 수 없습니다. (${serverNowDatetime})`,
-        )
-      }
-    } else {
-      serverNowDate = serverNowDatetime
-    }
-
-    // 적용시점 시간
-    const nowDate = new Date()
-
-    // 적용시점 시간과 앱 인스턴스 생성 시간 사이 차이
-    const intervalNowToInstanceCreatedAt =
-      nowDate.getTime() - this.instanceCreatedAt.getTime()
-
-    // 앱 인스턴스 생성 시간과 서버의 현재시간 사이 차이
-    const intervalInstanceCreatedAtToServerNowDatetime =
-      this.instanceCreatedAt.getTime() - serverNowDate.getTime()
-
-    // 서버의 현재시간과 앱 스크립트 활성화의 활성시간을 보정하기 위한 수치를 저장
-    this.diffInTimeServerToScript =
-      intervalNowToInstanceCreatedAt +
-      intervalInstanceCreatedAtToServerNowDatetime
-
-    // 서버기준 현재시간을 저장
-    this.serverNowDatetime = serverNowDate
   }
 
   /**
@@ -2571,203 +2181,6 @@ class Skript {
   }
 
   /**
-   * 라우트 데이터를 보관하는 변수
-   */
-  routes: any[] = []
-
-  /**
-   * 라우트 데이터 조회 메소드
-   * @returns {Promise<any>}
-   */
-  loadRoutes(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.ajax
-        .get(this._loadRouteEndpoint)
-        .then((res: any) => {
-          resolve(res.data.routeList)
-        })
-        .catch(reject)
-    })
-  }
-
-  /**
-   * 라우트 경로 생성 메소드
-   * @param {string} name 라우트 이름
-   * @param {{ [name: string]: any }} parameters 라우트 경로 생성에 사용할 파라미터 값 데이터 오브젝트
-   * @returns {string} 생성된 경로
-   * @throws Error - 존재하지 않는 라우트 이름이거나, 파라미터가 유효하지 않으면 예외를 발생시킴
-   * @example
-   * ```javascript
-   * // return '/goods/detail/134?affiliate=naver'
-   * Skript.route('goods.detail', { goodsId: 134, affliate: 'naver' });
-   * // 라우트 파라미터에 해당하지 않는 값을 parameters 값으로 넘기면 쿼리 파라미터로 생성함
-   * ```
-   */
-  route(name: string, parameters?: { [name: string]: any }): string {
-    // 저장된 라우트 데이터 리스트에서 해당 이름의 라우트 정보를 조회
-    const routeData = this.routes.find((route) => route.name === name)
-    if (routeData === undefined) {
-      throw new Error('해당 라우트를 찾을 수 없습니다.')
-    }
-
-    let resultPath: string = routeData.path
-
-    // 필수 파라미터 체크/라우트 파라미터 키 배열
-    let routeParamNames = []
-    if (Array.isArray(routeData.routeParameters)) {
-      // 필수 목록
-      const requires = (routeData.routeParameters as Array<any>).filter(
-        (route: any) => route.isOptional === false,
-      )
-
-      // 필수 파라미터 검증
-      requires.forEach((r) => {
-        if (
-          (parameters || {})[r.name] === null ||
-          (parameters || {})[r.name] === undefined
-        ) {
-          throw new Error(`필수 파라미터(${r.name})가 누락되었습니다.`)
-        }
-      })
-
-      // 필수 파라미터를 순회하며 치환
-      let match = resultPath.match(/{([^}]*)}/)
-      while (match) {
-        // 라우트 파라미터 이름 배열에 매칭결과를 추가
-        routeParamNames.push(match[1])
-
-        // 치환할 값
-        let replaceValue = (parameters || {})[match[1] as string]
-
-        resultPath = resultPath.replace(match[0], replaceValue)
-
-        // 정규식 재실행
-        match = resultPath.match(/{([^}]*)}/)
-      }
-    }
-
-    // 전해진 파라미터 중에서 라우트 파라미터에 해당하지 않는 값들은 쿼리 형태로 연결
-    const queryPairs: string[] = []
-    if (parameters) {
-      for (const key in parameters) {
-        if (parameters.hasOwnProperty(key)) {
-          if (routeParamNames.find((rpn) => rpn === key) === undefined) {
-            queryPairs.push(`${key}=${parameters[key]}`)
-          }
-        }
-      }
-    }
-
-    // 앞뒤의 슬래시 문자를 확정보정(앞에만 존재하도록)
-    let makedPath = '/' + resultPath.replace(/^\//, '').replace(/\/$/, '')
-    // 쿼리 형태의 페어가 존재한다면
-    if (queryPairs.length > 0) {
-      makedPath = makedPath + '?' + queryPairs.join('&')
-    }
-
-    // 만들어진 최종 주소 반환
-    return makedPath
-  }
-
-  /**
-   * 모든 페이지에서 적용해야하는 앱 초기화 함수
-   * 앱 페이지가 작동하기 전 실행되어야하는 비동기 액션을 실행한 후 프로미스를 반환
-   * @param {Function(Skript): void} initializer 개별적으로 추가실행할 초기화 함수
-   * @returns {Promise<any>}
-   * @example
-   * ```javascript
-   * App
-   * // init 함수에 app 인스턴스를 인자로 하는 추가 이니셜라이저를 사용할 수 있음
-   * .init(function (app) {
-   *    console.log('init Skript. :: ', app);
-   * })
-   * .then(function () {
-   *    // 화면에 사용하는 스크립트 작성
-   * })
-   * ```
-   */
-  init(initializer?: (app: Skript) => void): Promise<Skript> {
-    // 이미 프로미스가 할당되었다면 반환처리
-    if (this.initializePromise !== null) {
-      return this.initializePromise
-    }
-
-    this.initializePromise = new Promise((resolve, reject) => {
-      try {
-        if (this.isInitialized) {
-          // 이미 초기화 되었으면 바로 해결
-          if (document.readyState == 'complete') {
-            resolve(this)
-          } else {
-            window.addEventListener('load', () => {
-              resolve(this)
-            })
-          }
-        } else {
-          // 세션 스토리지에 5분 이내에 조회한 라우트 데이터가 있는지 확인
-          let isFetched = true
-          if (
-            !sessionStorage.getItem('routes') ||
-            !sessionStorage.getItem('routeFetchedAt') ||
-            new MMDate().isAfterOrEqual(
-              new MMDate(sessionStorage.getItem('routeFetchedAt')).after(
-                5,
-                'minutes',
-              ),
-              'minutes',
-            )
-          ) {
-            isFetched = false
-          }
-
-          let promised
-          if (isFetched) {
-            // 5분 이내 조회데이터 있으면 세션 스토리지에서 조회할당하는 프로미스 처리
-            promised = Promise.resolve().then(() => {
-              // session storage 에서 라우트 데이터 파싱
-              this.routes = JSON.parse(sessionStorage.getItem('routes')!)
-            })
-          } else {
-            // 5분 이내 조회데이터 없으면 서버에서 조회할당하는 프로미스 처리
-            promised = this.loadRoutes().then((routes) => {
-              // 라우트 조회 데이터 저장
-              sessionStorage.setItem('routes', JSON.stringify(routes))
-              sessionStorage.setItem('routeFetchedAt', new MMDate().format())
-              this.routes = routes
-            })
-          }
-
-          promised
-            .then(() => {
-              // 추가 지정된 이니셜라이저가 있다면 실행
-              if (initializer && typeof initializer === 'function') {
-                initializer(this)
-              }
-
-              // 초기화 완료
-              this.isInitialized = true
-
-              // 프로미스 해결
-              if (document.readyState == 'complete') {
-                resolve(this)
-              } else {
-                window.addEventListener('load', () => {
-                  resolve(this)
-                })
-              }
-            })
-            .catch(reject)
-        }
-      } catch (error) {
-        reject(error)
-      }
-    })
-
-    // 프로미스 반환
-    return this.initializePromise
-  }
-
-  /**
    * MD5 암호화 함수
    * @example
    * ```javascript
@@ -2776,23 +2189,6 @@ class Skript {
    * ```
    */
   md5 = md5
-
-  /**
-   * 각 페이지에서 네임스페이스를 적용하기 위한 번들 객체
-   */
-  pageScripts: any = {
-    common: {},
-  }
-
-  /**
-   * 콜백 메소드를 거치해놓기 위한 번들 객체
-   */
-  callbacks: any = {}
-
-  /**
-   * 각 페이지에서 뷰 인스턴스를 관리하기 위한 번들 객체
-   */
-  vues: any = {}
 }
 
-export { Skript }
+export = Skript

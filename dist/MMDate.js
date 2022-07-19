@@ -2,8 +2,6 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MMDate = void 0;
 var moment_1 = __importDefault(require("moment"));
 var MMDate = (function () {
     function MMDate(input) {
@@ -100,4 +98,4 @@ var MMDate = (function () {
     };
     return MMDate;
 }());
-exports.MMDate = MMDate;
+module.exports = MMDate;
