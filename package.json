@@ -1,6 +1,6 @@
 {
   "name": "@owneul/skript",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "javascript Helper Script Library for Web Developers.",
   "main": "./dist/Skript.min.js",
   "keywords": [
@@ -26,10 +26,11 @@
     "typedoc-plugin-markdown": "^3.8.1",
     "uglify-js": "^3.13.7",
     "minify": "^7.0.2",
-    "typescript": "^4.2.4",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
     "@types/md5": "^2.3.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1"
-  },
-  "dependencies": {}
+  }
 }
