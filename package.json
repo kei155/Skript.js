@@ -1,8 +1,8 @@
 {
   "name": "@owneul/skript",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "javascript Helper Script Library for Web Developers.",
-  "main": "./dist/Script.min.js",
+  "main": "./dist/Skript.min.js",
   "keywords": [
     "javascript",
     "web developer",
