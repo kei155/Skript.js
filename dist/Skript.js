@@ -1,4 +1,40 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -11,7 +47,7 @@ var Skript = (function () {
                 var result = [];
                 var targets = document.querySelectorAll(cssSelector);
                 targets.forEach(function (el, index, parent) {
-                    if (typeof filter == 'function' && filter(el) !== true) {
+                    if (typeof filter == "function" && filter(el) !== true) {
                         return;
                     }
                     if (el instanceof HTMLInputElement ||
@@ -29,7 +65,7 @@ var Skript = (function () {
                 var result = [];
                 var targets = document.querySelectorAll(cssSelector);
                 targets.forEach(function (el, index, parent) {
-                    if (typeof filter == 'function' && filter(el) !== true) {
+                    if (typeof filter == "function" && filter(el) !== true) {
                         return;
                     }
                     result.push(el.getAttribute(attributeName));
@@ -37,14 +73,14 @@ var Skript = (function () {
                 return result;
             },
             count: function (selector, filter) {
-                if (typeof selector !== 'string' && !selector.length) {
+                if (typeof selector !== "string" && !selector.length) {
                     throw new Error("'" + selector + "(" + typeof selector + ")' - \uC720\uD6A8\uD55C \uC140\uB809\uD130\uAC00 \uC544\uB2D9\uB2C8\uB2E4.");
                 }
-                var targets = typeof selector === 'string'
+                var targets = typeof selector === "string"
                     ? document.querySelectorAll(selector)
                     : selector;
                 var count = targets.length;
-                if (typeof filter == 'function') {
+                if (typeof filter == "function") {
                     count = 0;
                     for (var index = 0; index < targets.length; index++) {
                         var target = targets[index];
@@ -68,9 +104,9 @@ var Skript = (function () {
         };
         this.number = {
             comma: function (value) {
-                var numberedValue = Number.parseFloat('' + value);
+                var numberedValue = Number.parseFloat("" + value);
                 if (isNaN(numberedValue)) {
-                    return '';
+                    return "";
                 }
                 else if (Number.isFinite(numberedValue)) {
                     return numberedValue.toLocaleString();
@@ -78,42 +114,42 @@ var Skript = (function () {
                 else {
                     return numberedValue
                         .toString()
-                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
                 }
             },
         };
         this.str = {
             contains: function (value, check) {
-                value = '' + value;
-                check = '' + check;
+                value = "" + value;
+                check = "" + check;
                 return value.indexOf(check) > -1;
             },
             containsAll: function (value, checks) {
-                value = '' + value;
+                value = "" + value;
                 for (var index = 0; index < checks.length; index++) {
-                    var check = '' + checks[index];
-                    if (check !== '' && value.indexOf(check) == -1) {
+                    var check = "" + checks[index];
+                    if (check !== "" && value.indexOf(check) == -1) {
                         return false;
                     }
                 }
                 return true;
             },
             containsAny: function (value, checks) {
-                value = '' + value;
+                value = "" + value;
                 for (var index = 0; index < checks.length; index++) {
-                    var check = '' + checks[index];
-                    if (check !== '' && value.indexOf(check) > -1) {
+                    var check = "" + checks[index];
+                    if (check !== "" && value.indexOf(check) > -1) {
                         return true;
                     }
                 }
                 return false;
             },
             endsWith: function (value, check) {
-                value = '' + value;
-                var listing = typeof check === 'string' ? [check] : check || [];
+                value = "" + value;
+                var listing = typeof check === "string" ? [check] : check || [];
                 for (var index = 0; index < listing.length; index++) {
-                    var check_1 = '' + (listing[index] || '');
-                    if (check_1 !== '' &&
+                    var check_1 = "" + (listing[index] || "");
+                    if (check_1 !== "" &&
                         value.lastIndexOf(check_1) === value.length - check_1.length) {
                         return true;
                     }
@@ -121,29 +157,29 @@ var Skript = (function () {
                 return false;
             },
             finish: function (value, ends) {
-                value = '' + value;
-                ends = '' + ends;
+                value = "" + value;
+                ends = "" + ends;
                 return this.endsWith(value, ends) ? value : value + ends;
             },
             startsWith: function (value, check) {
-                value = '' + value;
-                var listing = typeof check === 'string' ? [check] : check || [];
+                value = "" + value;
+                var listing = typeof check === "string" ? [check] : check || [];
                 for (var index = 0; index < listing.length; index++) {
-                    var check_2 = '' + (listing[index] || '');
-                    if (check_2 !== '' && value.indexOf(check_2) === 0) {
+                    var check_2 = "" + (listing[index] || "");
+                    if (check_2 !== "" && value.indexOf(check_2) === 0) {
                         return true;
                     }
                 }
                 return false;
             },
             start: function (value, starts) {
-                value = '' + value;
-                starts = '' + starts;
+                value = "" + value;
+                starts = "" + starts;
                 return this.startsWith(value, starts) ? value : starts + value;
             },
             limit: function (value, limitLength, limitMark) {
-                if (limitMark === void 0) { limitMark = '...'; }
-                value = '' + value;
+                if (limitMark === void 0) { limitMark = "..."; }
+                value = "" + value;
                 if (value.length > limitLength) {
                     return value.substring(0, limitLength) + limitMark;
                 }
@@ -152,8 +188,8 @@ var Skript = (function () {
                 }
             },
             reverseLimit: function (value, limitLength, limitMark) {
-                if (limitMark === void 0) { limitMark = '...'; }
-                value = '' + value;
+                if (limitMark === void 0) { limitMark = "..."; }
+                value = "" + value;
                 if (value.length > limitLength) {
                     return limitMark + value.substring(value.length - limitLength);
                 }
@@ -162,41 +198,41 @@ var Skript = (function () {
                 }
             },
             wrap: function (value, target, before, after) {
-                if (before === void 0) { before = ''; }
-                if (after === void 0) { after = ''; }
-                value = '' + value;
+                if (before === void 0) { before = ""; }
+                if (after === void 0) { after = ""; }
+                value = "" + value;
                 return value.split(target).join(before + target + after);
             },
             padLeft: function (value, length, padString) {
-                return this.pad(value, length, padString, 'left');
+                return this.pad(value, length, padString, "left");
             },
             padRight: function (value, length, padString) {
-                return this.pad(value, length, padString, 'right');
+                return this.pad(value, length, padString, "right");
             },
             pad: function (value, length, padString, direction) {
-                padString = padString || '';
+                padString = padString || "";
                 if (isNaN(length) || length < 1) {
-                    throw new Error('패딩 길이가 유효하지 않습니다.');
+                    throw new Error("패딩 길이가 유효하지 않습니다.");
                 }
-                else if (padString === '') {
-                    throw new Error('패딩 문자가 지정되지 않았습니다.');
+                else if (padString === "") {
+                    throw new Error("패딩 문자가 지정되지 않았습니다.");
                 }
-                else if (direction !== 'left' && direction !== 'right') {
-                    throw new Error('패딩 방향이 유효하지 않습니다.');
+                else if (direction !== "left" && direction !== "right") {
+                    throw new Error("패딩 방향이 유효하지 않습니다.");
                 }
-                value = '' + value;
+                value = "" + value;
                 if (value.length < length) {
-                    return this.pad(direction === 'right' ? value + padString : padString + value, length, padString, direction);
+                    return this.pad(direction === "right" ? value + padString : padString + value, length, padString, direction);
                 }
                 else {
                     return value;
                 }
             },
             left: function (text, length) {
-                return ('' + text).substring(0, length);
+                return ("" + text).substring(0, length);
             },
             right: function (text, length) {
-                text = '' + text;
+                text = "" + text;
                 return text.substring(text.length - length, length);
             },
         };
@@ -206,9 +242,9 @@ var Skript = (function () {
         var query = querystring || location.search;
         var params = this.getQueryParams(query);
         var sections = paramKey
-            .split('[')
-            .map(function (section) { return section.replace(/\]$/, ''); })
-            .filter(function (section) { return section !== ''; });
+            .split("[")
+            .map(function (section) { return section.replace(/\]$/, ""); })
+            .filter(function (section) { return section !== ""; });
         var target = params;
         sections.forEach(function (section) {
             if (target === null) {
@@ -228,22 +264,22 @@ var Skript = (function () {
         var query = querystring || location.search;
         var params = {};
         query
-            .replace(/[^?]*\?/, '')
-            .split('&')
-            .filter(function (pairString) { return pairString !== ''; })
+            .replace(/[^?]*\?/, "")
+            .split("&")
+            .filter(function (pairString) { return pairString !== ""; })
             .map(function (pairString) {
-            var indexOfFirstEqualChar = pairString.indexOf('=');
+            var indexOfFirstEqualChar = pairString.indexOf("=");
             var splited = [
                 pairString.substring(0, indexOfFirstEqualChar),
                 pairString.substring(indexOfFirstEqualChar + 1),
             ];
             var key = decodeURIComponent(splited[0]);
-            var value = splited[1] || '';
+            var value = splited[1] || "";
             var match = key.match(/\[([^\[\]]*)\]/);
             if (match !== null && match.index) {
                 var slicedKey = key.substring(0, match.index);
                 var restKey = key.substring(match.index);
-                if (restKey === '[]') {
+                if (restKey === "[]") {
                     if (!params[slicedKey]) {
                         params[slicedKey] = [];
                     }
@@ -258,20 +294,20 @@ var Skript = (function () {
                     var targetObject = params[slicedKey];
                     for (var index = 0; index < matches.length; index++) {
                         var cuttedKey = matches[index]
-                            .replace(/^\[/, '')
-                            .replace(/\]$/, '');
-                        if (cuttedKey === '') {
+                            .replace(/^\[/, "")
+                            .replace(/\]$/, "");
+                        if (cuttedKey === "") {
                             if (!targetObject || !Array.isArray(targetObject)) {
                                 targetObject = [];
                             }
-                            if (value !== '') {
+                            if (value !== "") {
                                 targetObject.push(_this.formatQueryParamValue(value));
                             }
                             continue;
                         }
                         if (!targetObject[cuttedKey]) {
                             if (matches.length >= index + 1 &&
-                                matches[index + 1] === '[]') {
+                                matches[index + 1] === "[]") {
                                 targetObject[cuttedKey] = [];
                             }
                             else {
@@ -294,10 +330,10 @@ var Skript = (function () {
         return params;
     };
     Skript.prototype.formatQueryParamValue = function (value) {
-        if (value === 'true') {
+        if (value === "true") {
             return true;
         }
-        else if (value === 'false') {
+        else if (value === "false") {
             return false;
         }
         else if (!value.match(/^0/) &&
@@ -311,7 +347,7 @@ var Skript = (function () {
         }
     };
     Skript.prototype.clone = function (value) {
-        if (value === null || typeof value !== 'object')
+        if (value === null || typeof value !== "object")
             return value;
         var copy = value.constructor();
         for (var attr in value) {
@@ -322,7 +358,7 @@ var Skript = (function () {
         return copy;
     };
     Skript.prototype.addAction = function (selector, args, baseElementOrDocument) {
-        var options = typeof args === 'function'
+        var options = typeof args === "function"
             ? {
                 callback: args,
             }
@@ -331,23 +367,23 @@ var Skript = (function () {
             if (!options.callback) {
                 return;
             }
-            options.eventType = options.eventType || 'click';
+            options.eventType = options.eventType || "click";
             var targets_1 = this.getTargetsFromSelector(selector, baseElementOrDocument);
             for (var i = 0; i < targets_1.length; i++) {
                 var target = targets_1[i];
-                var eventTypeArray = options.eventType.split(',');
+                var eventTypeArray = options.eventType.split(",");
                 for (var j = 0; j < eventTypeArray.length; j++) {
                     var eventType = eventTypeArray[j].trim();
-                    if (eventType === '$enter') {
-                        target.addEventListener('keyup', function (event) {
-                            if (event && event.key === 'Enter') {
+                    if (eventType === "$enter") {
+                        target.addEventListener("keyup", function (event) {
+                            if (event && event.key === "Enter") {
                                 options.callback.call(this, targets_1);
                             }
                         });
                     }
-                    else if (eventType === '$esc') {
-                        target.addEventListener('keyup', function (event) {
-                            if (event && (event.key === 'Esc' || event.key === 'Escape')) {
+                    else if (eventType === "$esc") {
+                        target.addEventListener("keyup", function (event) {
+                            if (event && (event.key === "Esc" || event.key === "Escape")) {
                                 options.callback.call(this, targets_1);
                             }
                         });
@@ -362,7 +398,7 @@ var Skript = (function () {
         }
     };
     Skript.prototype.runAction = function (selector, func, baseElementOrDocument) {
-        if (selector && func && typeof func == 'function') {
+        if (selector && func && typeof func == "function") {
             var targets = this.getTargetsFromSelector(selector, baseElementOrDocument);
             for (var i = 0; i < targets.length; i++) {
                 var target = targets[i];
@@ -370,7 +406,7 @@ var Skript = (function () {
             }
         }
         else {
-            throw new Error('대상 선택기준이 없거나 실행할 함수가 없습니다.');
+            throw new Error("대상 선택기준이 없거나 실행할 함수가 없습니다.");
         }
     };
     Skript.prototype.getTargetsFromSelector = function (selector, baseElementOrDocument) {
@@ -381,18 +417,18 @@ var Skript = (function () {
         else if (selector instanceof NodeList) {
             targets = selector;
         }
-        else if (selector === 'window' || selector === window) {
+        else if (selector === "window" || selector === window) {
             targets = [window];
         }
-        else if (selector === 'document' || selector === document) {
+        else if (selector === "document" || selector === document) {
             targets = [document];
         }
-        else if (typeof selector === 'string') {
+        else if (typeof selector === "string") {
             if (baseElementOrDocument instanceof HTMLElement) {
-                targets = baseElementOrDocument.querySelectorAll(selector || 'temp.not-exist-selector');
+                targets = baseElementOrDocument.querySelectorAll(selector || "temp.not-exist-selector");
             }
             else {
-                targets = document.querySelectorAll(selector || 'temp.not-exist-selector');
+                targets = document.querySelectorAll(selector || "temp.not-exist-selector");
             }
         }
         else {
@@ -401,7 +437,7 @@ var Skript = (function () {
         return targets;
     };
     Skript.prototype.querify = function (obj) {
-        if (typeof obj === 'string') {
+        if (typeof obj === "string") {
             return "?" + obj + "=";
         }
         var pairs = [];
@@ -411,16 +447,16 @@ var Skript = (function () {
                 setPairString(pairs, key, element);
             }
         }
-        return pairs.length > 0 ? "?" + pairs.join('&') : '';
+        return pairs.length > 0 ? "?" + pairs.join("&") : "";
         function setPairString(_pairs, _key, _element) {
-            if (_element !== null && typeof _element === 'object') {
+            if (_element !== null && typeof _element === "object") {
                 if (Array.isArray(_element)) {
                     if (_element.length === 0) {
                         _pairs.push(_key + "[]=");
                     }
                     else {
                         _element.forEach(function (val) {
-                            if (val !== null && typeof val === 'object') {
+                            if (val !== null && typeof val === "object") {
                                 if (Array.isArray(val)) {
                                     setPairString(_pairs, _key + "[]", val);
                                 }
@@ -439,7 +475,7 @@ var Skript = (function () {
                                 }
                             }
                             else {
-                                if (typeof val === 'function') {
+                                if (typeof val === "function") {
                                     return;
                                 }
                                 if (isSpecialElement(val)) {
@@ -467,7 +503,7 @@ var Skript = (function () {
                 }
             }
             else {
-                if (typeof _element === 'function') {
+                if (typeof _element === "function") {
                     return;
                 }
                 if (isSpecialElement(_element)) {
@@ -480,7 +516,7 @@ var Skript = (function () {
         }
         function returnBlankIfNullOrUndefined(val) {
             if (val === null || val === undefined) {
-                return '';
+                return "";
             }
             else {
                 return val;
@@ -491,37 +527,37 @@ var Skript = (function () {
                 return false;
             }
             return (val.constructor === Date ||
-                (typeof val.getDateInstance === 'function' &&
+                (typeof val.getDateInstance === "function" &&
                     val.getDateInstance() &&
                     val.getDateInstance().constructor === Date));
         }
         function getSpecialElementValue(val) {
             if (val === null || val === undefined) {
-                return '';
+                return "";
             }
             if (val.constructor === Date) {
                 var year = val.getFullYear();
                 if (isNaN(year)) {
-                    return 'Invalid Date';
+                    return "Invalid Date";
                 }
-                var month = '' + (val.getMonth() + 1);
+                var month = "" + (val.getMonth() + 1);
                 if (month.length < 2)
-                    month = '0' + month;
-                var date = '' + val.getDate();
+                    month = "0" + month;
+                var date = "" + val.getDate();
                 if (date.length < 2)
-                    date = '0' + date;
-                var hour = '' + val.getHours();
+                    date = "0" + date;
+                var hour = "" + val.getHours();
                 if (hour.length < 2)
-                    hour = '0' + hour;
-                var minute = '' + val.getMinutes();
+                    hour = "0" + hour;
+                var minute = "" + val.getMinutes();
                 if (minute.length < 2)
-                    minute = '0' + minute;
-                var second = '' + val.getSeconds();
+                    minute = "0" + minute;
+                var second = "" + val.getSeconds();
                 if (second.length < 2)
-                    second = '0' + second;
+                    second = "0" + second;
                 return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
             }
-            else if (typeof val.getDateInstance === 'function' &&
+            else if (typeof val.getDateInstance === "function" &&
                 val.getDateInstance() &&
                 val.getDateInstance().constructor === Date) {
                 return returnBlankIfNullOrUndefined(val);
@@ -533,13 +569,13 @@ var Skript = (function () {
     };
     Skript.prototype.syncQueryParamsToPage = function (customHandlers, querystring) {
         var query = querystring || location.search;
-        var sections = query.replace(/^\?/, '').split('&');
+        var sections = query.replace(/^\?/, "").split("&");
         var matchCounts = {};
         sections
-            .map(function (section) { return section.split('='); })
+            .map(function (section) { return section.split("="); })
             .forEach(function (pair) {
             var key = decodeURIComponent(pair[0]);
-            var value = decodeURIComponent(decodeURI(pair[1]).replace(/\+/g, ' '));
+            var value = decodeURIComponent(decodeURI(pair[1]).replace(/\+/g, " "));
             if (matchCounts[key]) {
                 matchCounts[key] = matchCounts[key] + 1;
             }
@@ -549,13 +585,13 @@ var Skript = (function () {
             if (customHandlers) {
                 for (var handlerKey in customHandlers) {
                     if (customHandlers.hasOwnProperty(handlerKey) &&
-                        typeof customHandlers[handlerKey] === 'function') {
+                        typeof customHandlers[handlerKey] === "function") {
                         var reg = new RegExp(handlerKey
-                            .split('[*]')
+                            .split("[*]")
                             .map(function (section) {
-                            return section.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
+                            return section.replace(/\[/g, "\\[").replace(/\]/g, "\\]");
                         })
-                            .join('\\[([^\\]]*)\\]') + '$');
+                            .join("\\[([^\\]]*)\\]") + "$");
                         if (key.match(reg)) {
                             return customHandlers[handlerKey](key, value, matchCounts[key]);
                         }
@@ -564,7 +600,7 @@ var Skript = (function () {
             }
             if (customHandlers &&
                 customHandlers[key] &&
-                typeof customHandlers[key] === 'function') {
+                typeof customHandlers[key] === "function") {
                 return customHandlers[key](key, value, matchCounts[key]);
             }
             var matchElements = document.querySelectorAll("[name=\"" + key + "\"]");
@@ -576,9 +612,9 @@ var Skript = (function () {
                 matchElement = matchElements[0];
             }
             if (matchElement instanceof HTMLInputElement) {
-                switch (matchElement.getAttribute('type')) {
-                    case 'checkbox':
-                    case 'radio':
+                switch (matchElement.getAttribute("type")) {
+                    case "checkbox":
+                    case "radio":
                         var target = document.querySelector("[name=\"" + key + "\"][value=\"" + value + "\"]");
                         if (target instanceof HTMLInputElement) {
                             target.checked = true;
@@ -600,40 +636,40 @@ var Skript = (function () {
     Skript.prototype.extract = function (selector, options) {
         var element = document.querySelector(selector);
         var opt = options || {
-            dataType: 'json',
+            dataType: "json",
             appends: {},
         };
         if (element === null) {
-            throw new Error('대상 엘리먼트가 존재하지 않습니다.');
+            throw new Error("대상 엘리먼트가 존재하지 않습니다.");
         }
-        else if (typeof opt.dataType !== 'string') {
-            throw new Error('반환 데이터 타입이 유효하지 않습니다');
+        else if (typeof opt.dataType !== "string") {
+            throw new Error("반환 데이터 타입이 유효하지 않습니다");
         }
-        if (opt.dataType.toLowerCase() === 'json') {
+        if (opt.dataType.toLowerCase() === "json") {
             return this.extractJson(element, opt.appends);
         }
-        else if (opt.dataType.toLowerCase() === 'formdata') {
+        else if (opt.dataType.toLowerCase() === "formdata") {
             return this.extractFormData(element, opt.appends);
         }
         else {
-            throw new Error('반환 데이터 타입이 유효하지 않습니다');
+            throw new Error("반환 데이터 타입이 유효하지 않습니다");
         }
     };
     Skript.prototype.extractJson = function (element, appends, includeEmptyValue) {
-        var namedElements = element.querySelectorAll('[name]');
+        var namedElements = element.querySelectorAll("[name]");
         var extracted = appends || {};
         for (var i = 0; i < namedElements.length; i++) {
             var el = namedElements[i];
-            var elName = el.getAttribute('name') || '';
-            var isMultiple = elName.indexOf('[]') !== -1;
-            elName = elName.replace('[]', '');
+            var elName = el.getAttribute("name") || "";
+            var isMultiple = elName.indexOf("[]") !== -1;
+            elName = elName.replace("[]", "");
             if (el instanceof HTMLSelectElement &&
-                (includeEmptyValue || (el.value && el.value != ''))) {
+                (includeEmptyValue || (el.value && el.value != ""))) {
                 extracted[elName] = el.value;
             }
             else if (el instanceof HTMLInputElement) {
-                switch ((el.getAttribute('type') || '').toLowerCase()) {
-                    case 'checkbox':
+                switch ((el.getAttribute("type") || "").toLowerCase()) {
+                    case "checkbox":
                         if (el.checked) {
                             if (isMultiple) {
                                 extracted[elName] = Array.isArray(extracted[elName])
@@ -646,22 +682,22 @@ var Skript = (function () {
                             }
                         }
                         break;
-                    case 'radio':
+                    case "radio":
                         if (el.checked) {
                             extracted[elName] = el.value;
                         }
                         break;
-                    case 'text':
-                    case 'password':
-                    case 'email':
-                    case 'hidden':
-                    case 'search':
-                    case 'number':
-                    case 'tel':
-                    case 'date':
-                    case 'datetime':
-                    case 'datetime-local':
-                        if (includeEmptyValue || (el.value && el.value != '')) {
+                    case "text":
+                    case "password":
+                    case "email":
+                    case "hidden":
+                    case "search":
+                    case "number":
+                    case "tel":
+                    case "date":
+                    case "datetime":
+                    case "datetime-local":
+                        if (includeEmptyValue || (el.value && el.value != "")) {
                             if (isMultiple) {
                                 extracted[elName] = Array.isArray(extracted[elName])
                                     ? extracted[elName]
@@ -673,13 +709,13 @@ var Skript = (function () {
                             }
                         }
                         break;
-                    case 'file':
+                    case "file":
                         break;
                     default:
                 }
             }
             else if (el instanceof HTMLTextAreaElement) {
-                if (includeEmptyValue || (el.value && el.value != '')) {
+                if (includeEmptyValue || (el.value && el.value != "")) {
                     extracted[elName] = el.value;
                 }
             }
@@ -687,26 +723,50 @@ var Skript = (function () {
         return extracted;
     };
     Skript.prototype.extractFormData = function (element, appends, fileHandler) {
-        var namedElements = element.querySelectorAll('[name]');
-        var extracted = appends || {};
-        var formData = new FormData();
-        for (var key in extracted) {
-            formData.append(key, extracted[key]);
-        }
-        var fileCount = 0;
-        var fileOfContainer = {};
-        for (var i = 0; i < namedElements.length; i++) {
-            var el = namedElements[i];
-            var elName = el.getAttribute('name') || '';
-            var isMultiple = elName.indexOf('[]') !== -1;
-            if (el instanceof HTMLSelectElement && el.value && el.value != '') {
-                formData.append(elName, el.value);
-            }
-            else if (el instanceof HTMLInputElement ||
-                Object.getPrototypeOf(el).toString() == '[object HTMLInputElement]') {
-                var inputElement = el;
-                switch ((el.getAttribute('type') || '').toLowerCase()) {
-                    case 'checkbox':
+        return __awaiter(this, void 0, void 0, function () {
+            var namedElements, extracted, formData, key, fileCount, fileOfContainer, i, el, elName, isMultiple, inputElement, _a, index, file, metadata, formName, i, info;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        namedElements = element.querySelectorAll("[name]");
+                        extracted = appends || {};
+                        formData = new FormData();
+                        for (key in extracted) {
+                            formData.append(key, extracted[key]);
+                        }
+                        fileCount = 0;
+                        fileOfContainer = {};
+                        i = 0;
+                        _b.label = 1;
+                    case 1:
+                        if (!(i < namedElements.length)) return [3, 13];
+                        el = namedElements[i];
+                        elName = el.getAttribute("name") || "";
+                        isMultiple = elName.indexOf("[]") !== -1;
+                        if (!(el instanceof HTMLSelectElement && el.value && el.value != "")) return [3, 2];
+                        formData.append(elName, el.value);
+                        return [3, 12];
+                    case 2:
+                        if (!(el instanceof HTMLInputElement ||
+                            Object.getPrototypeOf(el).toString() == "[object HTMLInputElement]")) return [3, 11];
+                        inputElement = el;
+                        _a = (el.getAttribute("type") || "").toLowerCase();
+                        switch (_a) {
+                            case "checkbox": return [3, 3];
+                            case "radio": return [3, 4];
+                            case "text": return [3, 5];
+                            case "password": return [3, 5];
+                            case "email": return [3, 5];
+                            case "hidden": return [3, 5];
+                            case "search": return [3, 5];
+                            case "tel": return [3, 5];
+                            case "date": return [3, 5];
+                            case "datetime": return [3, 5];
+                            case "datetime-local": return [3, 5];
+                            case "file": return [3, 6];
+                        }
+                        return [3, 10];
+                    case 3:
                         if (inputElement.checked) {
                             if (isMultiple) {
                                 formData.append(elName, inputElement.value);
@@ -716,78 +776,79 @@ var Skript = (function () {
                                 formData.append(elName, inputElement.value);
                             }
                         }
-                        break;
-                    case 'radio':
+                        return [3, 10];
+                    case 4:
                         if (inputElement.checked) {
                             formData.append(elName, inputElement.value);
                         }
-                        break;
-                    case 'text':
-                    case 'password':
-                    case 'email':
-                    case 'hidden':
-                    case 'search':
-                    case 'tel':
-                    case 'date':
-                    case 'datetime':
-                    case 'datetime-local':
-                        if (inputElement.value && inputElement.value != '') {
+                        return [3, 10];
+                    case 5:
+                        if (inputElement.value && inputElement.value != "") {
                             formData.append(elName, inputElement.value);
                         }
-                        break;
-                    case 'file':
+                        return [3, 10];
+                    case 6:
                         if (inputElement.files) {
                             fileCount += inputElement.files.length;
                         }
-                        if (fileHandler) {
-                            fileHandler(formData, elName, inputElement.files, inputElement);
-                        }
-                        else {
-                            if (inputElement.files && inputElement.files.length > 0) {
-                                if (inputElement.files.length > 1) {
-                                    for (var index = 0; index < inputElement.files.length; index++) {
-                                        var file = inputElement.files[index];
-                                        formData.append(elName + "[" + index + "]", file);
-                                    }
-                                }
-                                else {
-                                    formData.append(elName, inputElement.files[0]);
+                        if (!fileHandler) return [3, 8];
+                        return [4, fileHandler(formData, elName, inputElement.files, inputElement)];
+                    case 7:
+                        _b.sent();
+                        return [3, 9];
+                    case 8:
+                        if (inputElement.files && inputElement.files.length > 0) {
+                            if (inputElement.files.length > 1) {
+                                for (index = 0; index < inputElement.files.length; index++) {
+                                    file = inputElement.files[index];
+                                    formData.append(elName + "[" + index + "]", file);
                                 }
                             }
+                            else {
+                                formData.append(elName, inputElement.files[0]);
+                            }
                         }
-                        break;
-                    default:
+                        _b.label = 9;
+                    case 9: return [3, 10];
+                    case 10: return [3, 12];
+                    case 11:
+                        if (el instanceof HTMLTextAreaElement) {
+                            if (el.value && el.value != "") {
+                                formData.append(elName, el.value);
+                            }
+                        }
+                        else if (el instanceof HTMLElement &&
+                            el.hasAttribute("contenteditable")) {
+                            formData.append(elName, el.innerText);
+                        }
+                        _b.label = 12;
+                    case 12:
+                        i++;
+                        return [3, 1];
+                    case 13:
+                        if (fileCount > 0) {
+                            metadata = {
+                                totalCount: fileCount,
+                                files: {},
+                            };
+                            for (formName in fileOfContainer) {
+                                metadata.files[formName] = [];
+                                for (i = 0; i < fileOfContainer[formName].length; i++) {
+                                    info = fileOfContainer[formName][i];
+                                    metadata.files[formName].push({
+                                        isNew: info instanceof File,
+                                        url: info instanceof File
+                                            ? null
+                                            : (info.name || "").replace(/\?.*/, ""),
+                                    });
+                                }
+                            }
+                            formData.append("metadata_files", JSON.stringify(metadata));
+                        }
+                        return [2, formData];
                 }
-            }
-            else if (el instanceof HTMLTextAreaElement) {
-                if (el.value && el.value != '') {
-                    formData.append(elName, el.value);
-                }
-            }
-            else if (el instanceof HTMLElement && el.hasAttribute('contenteditable')) {
-                formData.append(elName, el.innerText);
-            }
-        }
-        if (fileCount > 0) {
-            var metadata = {
-                totalCount: fileCount,
-                files: {},
-            };
-            for (var formName in fileOfContainer) {
-                metadata.files[formName] = [];
-                for (var i = 0; i < fileOfContainer[formName].length; i++) {
-                    var info = fileOfContainer[formName][i];
-                    metadata.files[formName].push({
-                        isNew: info instanceof File,
-                        url: info instanceof File
-                            ? null
-                            : (info.name || '').replace(/\?.*/, ''),
-                    });
-                }
-            }
-            formData.append('metadata_files', JSON.stringify(metadata));
-        }
-        return formData;
+            });
+        });
     };
     Skript.prototype.wait = function (second) {
         return new Promise(function (resolve) {
@@ -797,14 +858,14 @@ var Skript = (function () {
         });
     };
     Skript.prototype.range = function (start, end) {
-        if (typeof start !== 'number') {
-            throw new Error('시작값이 없거나 숫자가 아닙니다.');
+        if (typeof start !== "number") {
+            throw new Error("시작값이 없거나 숫자가 아닙니다.");
         }
-        else if (typeof end !== 'number') {
-            throw new Error('종료값이 없거나 숫자가 아닙니다.');
+        else if (typeof end !== "number") {
+            throw new Error("종료값이 없거나 숫자가 아닙니다.");
         }
         else if (end < start) {
-            throw new Error('시작값이 종료값보다 큽니다.');
+            throw new Error("시작값이 종료값보다 큽니다.");
         }
         var arr = [];
         for (var num = start; num <= end; num++) {
@@ -814,14 +875,14 @@ var Skript = (function () {
     };
     Skript.prototype.random = function (min, max, isFloor) {
         if (isFloor === void 0) { isFloor = true; }
-        if (typeof min !== 'number') {
-            throw new Error('최소값이 없거나 숫자가 아닙니다.');
+        if (typeof min !== "number") {
+            throw new Error("최소값이 없거나 숫자가 아닙니다.");
         }
-        else if (typeof max !== 'number') {
-            throw new Error('최대값이 없거나 숫자가 아닙니다.');
+        else if (typeof max !== "number") {
+            throw new Error("최대값이 없거나 숫자가 아닙니다.");
         }
         else if (max < min) {
-            throw new Error('최소값이 최대값보다 큽니다.');
+            throw new Error("최소값이 최대값보다 큽니다.");
         }
         var interval = max - min + 1;
         return ((isFloor === true
@@ -832,18 +893,18 @@ var Skript = (function () {
         var groupped = {};
         Array.prototype.forEach.call(arr, function (item) {
             var confirmedKey = item[keyName];
-            if (('' + keyName).indexOf('.') > -1) {
+            if (("" + keyName).indexOf(".") > -1) {
                 confirmedKey = item;
-                keyName.split('.').forEach(function (splitedKey) {
+                keyName.split(".").forEach(function (splitedKey) {
                     if (confirmedKey[splitedKey]) {
                         confirmedKey = confirmedKey[splitedKey];
                     }
                     else {
-                        confirmedKey = '';
+                        confirmedKey = "";
                     }
                 });
             }
-            if (typeof keyModifier === 'function') {
+            if (typeof keyModifier === "function") {
                 confirmedKey = keyModifier(confirmedKey);
             }
             if (groupped[confirmedKey]) {
@@ -875,13 +936,13 @@ var Skript = (function () {
                 return this;
             },
             until: function (tester) {
-                if (typeof tester === 'function') {
+                if (typeof tester === "function") {
                     this.tester = tester;
                 }
                 return this;
             },
             whenEnd: function (endHandler) {
-                if (typeof endHandler === 'function') {
+                if (typeof endHandler === "function") {
                     this.endHandler = endHandler;
                 }
                 return this;
@@ -891,7 +952,7 @@ var Skript = (function () {
     Skript.prototype.runWhenReady = function (checkTarget, task, tryCount, intervalSecond) {
         if (tryCount === void 0) { tryCount = 0; }
         if (intervalSecond === void 0) { intervalSecond = 1; }
-        var checkTargetConfirmed = typeof checkTarget === 'string' || typeof checkTarget === 'function'
+        var checkTargetConfirmed = typeof checkTarget === "string" || typeof checkTarget === "function"
             ? [checkTarget]
             : checkTarget;
         var count = 0;
@@ -900,7 +961,7 @@ var Skript = (function () {
                 clearInterval(intervalId);
             }
             for (var index = 0; index < checkTargetConfirmed.length; index++) {
-                if (typeof checkTargetConfirmed[index] === 'function') {
+                if (typeof checkTargetConfirmed[index] === "function") {
                     try {
                         if (checkTargetConfirmed[index]() !== true) {
                             count++;
@@ -912,9 +973,9 @@ var Skript = (function () {
                         clearInterval(intervalId);
                     }
                 }
-                else if (typeof checkTargetConfirmed[index] === 'string') {
+                else if (typeof checkTargetConfirmed[index] === "string") {
                     var targetString = checkTargetConfirmed[index];
-                    var splited = targetString.split('.');
+                    var splited = targetString.split(".");
                     var targetObj = window[splited[0]];
                     for (var j = 1; j < splited.length; j++) {
                         targetObj = targetObj[splited[j]];
@@ -945,8 +1006,8 @@ var Skript = (function () {
         }, intervalSecond * 1000);
     };
     Skript.prototype.uuidv4 = function () {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = (Math.random() * 16) | 0, v = c == 'x' ? r : (r & 0x3) | 0x8;
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+            var r = (Math.random() * 16) | 0, v = c == "x" ? r : (r & 0x3) | 0x8;
             return v.toString(16);
         });
     };
@@ -954,7 +1015,7 @@ var Skript = (function () {
         var _this = this;
         if (excuteOnInitialized === void 0) { excuteOnInitialized = false; }
         var targetDate;
-        if (typeof targetDatetime === 'string') {
+        if (typeof targetDatetime === "string") {
             targetDate = new Date(targetDatetime);
             if (isNaN(targetDate.getTime())) {
                 throw new Error("Date \uD0C0\uC785\uC73C\uB85C \uBCC0\uD658\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. (" + targetDatetime + ")");
@@ -966,23 +1027,23 @@ var Skript = (function () {
         var targetDateTime = targetDate.getTime();
         var intervalSecond = 1;
         switch (intervalType.toLowerCase()) {
-            case 's':
-            case 'second':
-            case 'seconds':
+            case "s":
+            case "second":
+            case "seconds":
                 break;
-            case 'ms':
-            case 'millisecond':
-            case 'milliseconds':
+            case "ms":
+            case "millisecond":
+            case "milliseconds":
                 intervalSecond = 0.001;
                 break;
-            case 'm':
-            case 'minute':
-            case 'minutes':
+            case "m":
+            case "minute":
+            case "minutes":
                 intervalSecond = 60;
                 break;
-            case 'h':
-            case 'hour':
-            case 'hours':
+            case "h":
+            case "hour":
+            case "hours":
                 intervalSecond = 3600;
                 break;
             default:

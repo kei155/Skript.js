@@ -1,18 +1,18 @@
-import md5 from 'md5'
-import MMDate from './MMDate'
+import md5 from "md5";
+import MMDate from "./MMDate";
 
 /**
  * 문자열 키와 문자열 값을 갖는 집합체
  */
 interface RouteParameters {
-  [name: string]: string
+  [name: string]: string;
 }
 
 /**
  * 문자열 키와 임의형태의 값을 갖는 집합체
  */
 interface QueryParameters {
-  [name: string]: any
+  [name: string]: any;
 }
 
 /**
@@ -22,12 +22,12 @@ interface AddActionOption {
   /**
    * 이벤트 콜백 구현함수 (this는 이벤트가 걸린 대상을 참조하고, 인자값으로 addAction 에 해당되었던 대상 배열을 전달한다)
    */
-  callback: (targets: any[]) => void
+  callback: (targets: any[]) => void;
 
   /**
    * 이벤트 타입 : $enter, $esc 예약을 지원함. 콤마(,)로 concat 된 다수 이벤트 타입 지원
    */
-  eventType?: string
+  eventType?: string;
 }
 
 /**
@@ -37,12 +37,12 @@ interface ExtractOption {
   /**
    * 반환 데이터 타입 (json, FormData)
    */
-  dataType: string
+  dataType: string;
 
   /**
    * 취합취득할 데이터 (전달된 셀렉터를 통해 지정되는 데이터가 있다면 덮어씌워짐)
    */
-  appends: any
+  appends: any;
 }
 
 /**
@@ -52,37 +52,37 @@ interface Tick {
   /**
    * interval 고유키
    */
-  intervalId: number
+  intervalId: number;
 
   /**
    * tick 된 횟수
    */
-  count: number
+  count: number;
 
   /**
    * 종료여부를 확인하기 위한 테스터 메소드
    */
-  tester: () => boolean
+  tester: () => boolean;
 
   /**
    * 종료시 실행할 메소드
    */
-  endHandler: () => void
+  endHandler: () => void;
 
   /**
    * interval 동안 실행 될 함수
    */
-  do: (action: (count?: number) => void) => Tick
+  do: (action: (count?: number) => void) => Tick;
 
   /**
    * 종료여부를 확인할 메소드
    */
-  until: (tester: () => boolean) => Tick
+  until: (tester: () => boolean) => Tick;
 
   /**
    * 종료되었을 때 실행할 메소드 지정
    */
-  whenEnd: (endHandler: () => void) => Tick
+  whenEnd: (endHandler: () => void) => Tick;
 }
 
 /**
@@ -114,37 +114,37 @@ class Skript {
    */
   getQueryParam(
     paramKey: string,
-    querystring?: string,
+    querystring?: string
   ): string | number | object {
-    const query = querystring || location.search
+    const query = querystring || location.search;
 
     // 구조화 된 데이터 획득
-    const params = this.getQueryParams(query)
+    const params = this.getQueryParams(query);
 
     // 요청키를 분할 (data[name] 같은 형태로 들어오는 경우 data -> name 순차접근 위해)
     const sections = paramKey
-      .split('[')
-      .map((section) => section.replace(/\]$/, ''))
-      .filter((section) => section !== '')
+      .split("[")
+      .map((section) => section.replace(/\]$/, ""))
+      .filter((section) => section !== "");
 
     // 뎁스에 따라 변하는 참조대상
-    let target: any = params
+    let target: any = params;
 
     // 분할된 요청키를 순회하며 참조대상을 추적
     sections.forEach((section) => {
       if (target === null) {
-        return
+        return;
       }
 
       if (target[section] === null || target[section] === undefined) {
-        target = null
+        target = null;
       } else {
-        target = target[section]
+        target = target[section];
       }
-    })
+    });
 
     // 순회 후 최종 참조대상값 반환
-    return target === undefined ? null : target
+    return target === undefined ? null : target;
   }
 
   /**
@@ -161,75 +161,75 @@ class Skript {
    * ```
    */
   getQueryParams(querystring?: string): QueryParameters {
-    const query = querystring || location.search
+    const query = querystring || location.search;
 
     // 쿼리 파라미터 구조체 변수 선언
-    const params: QueryParameters = {}
+    const params: QueryParameters = {};
 
     // 주어진 쿼리스트링을 분석
     query
-      .replace(/[^?]*\?/, '')
-      .split('&')
-      .filter((pairString) => pairString !== '')
+      .replace(/[^?]*\?/, "")
+      .split("&")
+      .filter((pairString) => pairString !== "")
       .map((pairString) => {
         // 페어 문자열 분할(key=value -> ['key', 'value'])
-        const indexOfFirstEqualChar = pairString.indexOf('=')
+        const indexOfFirstEqualChar = pairString.indexOf("=");
         const splited = [
           pairString.substring(0, indexOfFirstEqualChar),
           pairString.substring(indexOfFirstEqualChar + 1),
-        ]
+        ];
 
-        let key = decodeURIComponent(splited[0])
-        const value = splited[1] || ''
+        let key = decodeURIComponent(splited[0]);
+        const value = splited[1] || "";
 
         // 키의 구조 확인([] 존재여부)
-        let match = key.match(/\[([^\[\]]*)\]/)
+        let match = key.match(/\[([^\[\]]*)\]/);
 
         // 매칭되었다면 구조화
         if (match !== null && match.index) {
           // 구조체 키 / 나머지로 분할 (row[data][name] -> 'row' / '[data][name]')
-          let slicedKey = key.substring(0, match.index)
-          let restKey = key.substring(match.index)
+          let slicedKey = key.substring(0, match.index);
+          let restKey = key.substring(match.index);
 
           // 나머지가 [] 값이라면 최하위 뎁스라서 배열처리하면 됨
-          if (restKey === '[]') {
+          if (restKey === "[]") {
             if (!params[slicedKey]) {
-              params[slicedKey] = []
+              params[slicedKey] = [];
             }
 
-            params[slicedKey] = params[slicedKey] as Array<any>
+            params[slicedKey] = params[slicedKey] as Array<any>;
 
             // 값 지정
-            params[slicedKey].push(this.formatQueryParamValue(value))
+            params[slicedKey].push(this.formatQueryParamValue(value));
           } else {
             // 나머지가 [.*] 값이라면 객체처리함
             if (!params[slicedKey]) {
-              params[slicedKey] = {}
+              params[slicedKey] = {};
             }
 
             // 나머지에서 매칭되는 모든 [.*] 값을 조회
-            let matches = restKey.match(/\[([^\[\]]*)\]/g) || []
+            let matches = restKey.match(/\[([^\[\]]*)\]/g) || [];
 
             // 동적으로 변하는 대상객체
-            let targetObject = params[slicedKey]
+            let targetObject = params[slicedKey];
 
             // 매칭된 모든 [.*] 값을 순회
             for (let index = 0; index < matches.length; index++) {
               // [, ] 를 잘라낸 키
               let cuttedKey: string | number = matches[index]
-                .replace(/^\[/, '')
-                .replace(/\]$/, '')
+                .replace(/^\[/, "")
+                .replace(/\]$/, "");
 
               // cuttedKey 값이 공백이라면 k[n][m][] 의 마지막 [] 부분인 것이므로 배열 생성하고 푸시해서 continue 처리해야함
-              if (cuttedKey === '') {
+              if (cuttedKey === "") {
                 if (!targetObject || !Array.isArray(targetObject)) {
-                  targetObject = []
+                  targetObject = [];
                 }
 
-                if (value !== '') {
-                  targetObject.push(this.formatQueryParamValue(value))
+                if (value !== "") {
+                  targetObject.push(this.formatQueryParamValue(value));
                 }
-                continue
+                continue;
               }
 
               // 해당 키 데이터 객체가 없으면 생성해주기
@@ -237,31 +237,31 @@ class Skript {
                 // 다음 match 가 존재하고 다음 match 가 [] 형태라면 배열로, 그 외에는 객체타입으로 선언
                 if (
                   matches.length >= index + 1 &&
-                  matches[index + 1] === '[]'
+                  matches[index + 1] === "[]"
                 ) {
-                  targetObject[cuttedKey] = []
+                  targetObject[cuttedKey] = [];
                 } else {
-                  targetObject[cuttedKey] = {}
+                  targetObject[cuttedKey] = {};
                 }
               }
 
               if (index === matches.length - 1) {
                 // 순회가 마지막이면 값을 할당
-                targetObject[cuttedKey] = this.formatQueryParamValue(value)
+                targetObject[cuttedKey] = this.formatQueryParamValue(value);
               } else {
                 // 순회가 마지막이 아니면 대상객체를 지정
-                targetObject = targetObject[cuttedKey]
+                targetObject = targetObject[cuttedKey];
               }
             }
           }
         } else {
           // 매칭 안 되었으면 바로 할당해주면 됨
-          params[key] = this.formatQueryParamValue(value)
+          params[key] = this.formatQueryParamValue(value);
         }
-      })
+      });
 
     // 할당 완료된 구조체 반환
-    return params
+    return params;
   }
 
   /**
@@ -271,19 +271,19 @@ class Skript {
    * @ignore
    */
   private formatQueryParamValue(value: string): number | boolean | string {
-    if (value === 'true') {
-      return true
-    } else if (value === 'false') {
-      return false
+    if (value === "true") {
+      return true;
+    } else if (value === "false") {
+      return false;
     } else if (
       !value.match(/^0/) &&
       !value.match(/[^\d\.]/) &&
       !isNaN(Number.parseFloat(value)) &&
       value == Number.parseFloat(value).toString()
     ) {
-      return Number.parseFloat(value)
+      return Number.parseFloat(value);
     } else {
-      return decodeURIComponent(value)
+      return decodeURIComponent(value);
     }
   }
 
@@ -320,17 +320,17 @@ class Skript {
    * ```
    */
   public clone(value: any): any {
-    if (value === null || typeof value !== 'object') return value
+    if (value === null || typeof value !== "object") return value;
 
-    var copy = value.constructor()
+    var copy = value.constructor();
 
     for (var attr in value) {
       if (value.hasOwnProperty(attr)) {
-        copy[attr] = this.clone(value[attr])
+        copy[attr] = this.clone(value[attr]);
       }
     }
 
-    return copy
+    return copy;
   }
 
   /**
@@ -358,63 +358,63 @@ class Skript {
   addAction(
     selector: string | HTMLElement | NodeList | Window | Document,
     args: Function | AddActionOption,
-    baseElementOrDocument?: HTMLElement,
+    baseElementOrDocument?: HTMLElement
   ) {
     // 두 번째 인자가 함수라면 이벤트 타입이 클릭으로 고정되는 축약형 호출임 (원래 두 번째 인자는 { 이벤트 타입, 콜백 } 형태의 객체)
     let options =
-      typeof args === 'function'
+      typeof args === "function"
         ? ({
-          callback: args as Function,
-        } as AddActionOption)
-        : args || ({} as AddActionOption)
+            callback: args as Function,
+          } as AddActionOption)
+        : args || ({} as AddActionOption);
 
     // 인자가 갖춰졌을 때에만 실행
     if (selector && options.callback) {
       // 콜백이 없으면 리턴
       if (!options.callback) {
-        return
+        return;
       }
 
       // 이벤트 타입은 기본적으로 클릭
-      options.eventType = options.eventType || 'click'
+      options.eventType = options.eventType || "click";
 
       // 타겟 확정 (셀렉터는 문자열 또는 엘리먼트 형태로 넘어올 수 있음)
       const targets = this.getTargetsFromSelector(
         selector,
-        baseElementOrDocument,
-      )
+        baseElementOrDocument
+      );
 
       // 타겟 순회하면서 콜백 리스너를 거치
       for (var i = 0; i < targets.length; i++) {
-        const target = targets[i]
+        const target = targets[i];
 
         // 이벤트 타입이 다중으로 걸린 경우를 위해 순환 (ex: '$enter,click')
-        const eventTypeArray = options.eventType.split(',')
+        const eventTypeArray = options.eventType.split(",");
         for (let j = 0; j < eventTypeArray.length; j++) {
-          const eventType = eventTypeArray[j].trim()
+          const eventType = eventTypeArray[j].trim();
           // $enter, $esc는 엔터키와 ESC키 누르는 것에 대한 축약형 이벤트타입
-          if (eventType === '$enter') {
-            target.addEventListener('keyup', function (
-              this: any,
-              event: KeyboardEvent,
-            ) {
-              if (event && event.key === 'Enter') {
-                options.callback.call(this, targets)
+          if (eventType === "$enter") {
+            target.addEventListener(
+              "keyup",
+              function (this: any, event: KeyboardEvent) {
+                if (event && event.key === "Enter") {
+                  options.callback.call(this, targets);
+                }
               }
-            })
-          } else if (eventType === '$esc') {
-            target.addEventListener('keyup', function (
-              this: any,
-              event: KeyboardEvent,
-            ) {
-              if (event && (event.key === 'Esc' || event.key === 'Escape')) {
-                options.callback.call(this, targets)
+            );
+          } else if (eventType === "$esc") {
+            target.addEventListener(
+              "keyup",
+              function (this: any, event: KeyboardEvent) {
+                if (event && (event.key === "Esc" || event.key === "Escape")) {
+                  options.callback.call(this, targets);
+                }
               }
-            })
+            );
           } else {
             target.addEventListener(eventType, function (this: any) {
-              options.callback.call(this, targets)
-            })
+              options.callback.call(this, targets);
+            });
           }
         }
       }
@@ -438,21 +438,21 @@ class Skript {
   runAction(
     selector: string | HTMLElement | NodeList | Window | Document,
     func: Function,
-    baseElementOrDocument?: HTMLElement,
+    baseElementOrDocument?: HTMLElement
   ) {
-    if (selector && func && typeof func == 'function') {
+    if (selector && func && typeof func == "function") {
       // 타겟 확정 (셀렉터는 문자열 또는 엘리먼트 형태로 넘어올 수 있음)
       const targets = this.getTargetsFromSelector(
         selector,
-        baseElementOrDocument,
-      )
+        baseElementOrDocument
+      );
 
       for (let i = 0; i < targets.length; i++) {
-        const target = targets[i]
-        func.call(target, targets, i)
+        const target = targets[i];
+        func.call(target, targets, i);
       }
     } else {
-      throw new Error('대상 선택기준이 없거나 실행할 함수가 없습니다.')
+      throw new Error("대상 선택기준이 없거나 실행할 함수가 없습니다.");
     }
   }
 
@@ -465,32 +465,32 @@ class Skript {
    */
   private getTargetsFromSelector(
     selector: string | HTMLElement | NodeList | Window | Document,
-    baseElementOrDocument?: HTMLElement | Document,
+    baseElementOrDocument?: HTMLElement | Document
   ): any {
-    let targets
+    let targets;
     if (selector instanceof HTMLElement) {
-      targets = [selector]
+      targets = [selector];
     } else if (selector instanceof NodeList) {
-      targets = selector
-    } else if (selector === 'window' || selector === window) {
-      targets = [window]
-    } else if (selector === 'document' || selector === document) {
-      targets = [document]
-    } else if (typeof selector === 'string') {
+      targets = selector;
+    } else if (selector === "window" || selector === window) {
+      targets = [window];
+    } else if (selector === "document" || selector === document) {
+      targets = [document];
+    } else if (typeof selector === "string") {
       if (baseElementOrDocument instanceof HTMLElement) {
         targets = baseElementOrDocument.querySelectorAll(
-          selector || 'temp.not-exist-selector',
-        )
+          selector || "temp.not-exist-selector"
+        );
       } else {
         targets = document.querySelectorAll(
-          selector || 'temp.not-exist-selector',
-        )
+          selector || "temp.not-exist-selector"
+        );
       }
     } else {
-      targets = selector
+      targets = selector;
     }
 
-    return targets
+    return targets;
   }
 
   /**
@@ -542,23 +542,23 @@ class Skript {
    * ```
    */
   querify(obj: any): string {
-    if (typeof obj === 'string') {
-      return `?${obj}=`
+    if (typeof obj === "string") {
+      return `?${obj}=`;
     }
 
     // key=value 형태의 페어 문자열을 담아둘 변수 선언
-    const pairs: any[] = []
+    const pairs: any[] = [];
 
     // 전달된 obj를 순회하며 페어 문자열 생성
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
-        const element = obj[key]
-        setPairString(pairs, key, element)
+        const element = obj[key];
+        setPairString(pairs, key, element);
       }
     }
 
     // 페어 문자열 길이에 따라 반환값 조정
-    return pairs.length > 0 ? `?${pairs.join('&')}` : ''
+    return pairs.length > 0 ? `?${pairs.join("&")}` : "";
 
     /**
      * 페어 문자열을 세팅하는 내부메소드
@@ -567,92 +567,92 @@ class Skript {
      * @param {*} _element 페어 문자열의 값이 될 데이터 요소
      */
     function setPairString(_pairs: any, _key: string, _element: any) {
-      if (_element !== null && typeof _element === 'object') {
+      if (_element !== null && typeof _element === "object") {
         // 전달된 데이터 요소가 null이 아닌 object 타입이라면
         if (Array.isArray(_element)) {
           // 데이터 요소가 배열 형태일 때
           if (_element.length === 0) {
             // 배열의 길이가 0이라면 key만 세팅
-            _pairs.push(`${_key}[]=`)
+            _pairs.push(`${_key}[]=`);
           } else {
             // 배열의 요소를 순회
             _element.forEach((val) => {
-              if (val !== null && typeof val === 'object') {
+              if (val !== null && typeof val === "object") {
                 if (Array.isArray(val)) {
                   // 재귀호출
-                  setPairString(_pairs, `${_key}[]`, val)
+                  setPairString(_pairs, `${_key}[]`, val);
                 } else {
                   // 예외케이스 : Date, MMDate
                   if (isSpecialElement(val)) {
                     _pairs.push(
                       `${_key}=${encodeURIComponent(
-                        getSpecialElementValue(_element),
-                      )}`,
-                    )
+                        getSpecialElementValue(_element)
+                      )}`
+                    );
                   } else {
                     for (const key in val) {
                       if (val.hasOwnProperty(key)) {
-                        const nestedElement = val[key]
+                        const nestedElement = val[key];
                         setPairString(
                           _pairs,
                           `${_key}[][${key}]`,
-                          nestedElement,
-                        )
+                          nestedElement
+                        );
                       }
                     }
                   }
                 }
               } else {
-                if (typeof val === 'function') {
-                  return
+                if (typeof val === "function") {
+                  return;
                 }
 
                 if (isSpecialElement(val)) {
                   _pairs.push(
                     `${_key}[]=${encodeURIComponent(
-                      getSpecialElementValue(val),
-                    )}`,
-                  )
+                      getSpecialElementValue(val)
+                    )}`
+                  );
                 } else {
                   _pairs.push(
                     `${_key}[]=${encodeURIComponent(
-                      returnBlankIfNullOrUndefined(val),
-                    )}`,
-                  )
+                      returnBlankIfNullOrUndefined(val)
+                    )}`
+                  );
                 }
               }
-            })
+            });
           }
         } else {
           if (isSpecialElement(_element)) {
             _pairs.push(
-              `${_key}=${encodeURIComponent(getSpecialElementValue(_element))}`,
-            )
+              `${_key}=${encodeURIComponent(getSpecialElementValue(_element))}`
+            );
           } else {
             // 데이터 요소가 객체 형태일 때
             for (const key in _element) {
               if (_element.hasOwnProperty(key)) {
-                const nestedElement = _element[key]
-                setPairString(_pairs, `${_key}[${key}]`, nestedElement)
+                const nestedElement = _element[key];
+                setPairString(_pairs, `${_key}[${key}]`, nestedElement);
               }
             }
           }
         }
       } else {
-        if (typeof _element === 'function') {
-          return
+        if (typeof _element === "function") {
+          return;
         }
         if (isSpecialElement(_element)) {
           _pairs.push(
-            `${_key}=${encodeURIComponent(getSpecialElementValue(_element))}`,
-          )
+            `${_key}=${encodeURIComponent(getSpecialElementValue(_element))}`
+          );
         } else {
           // 데이터 요소가 객체 또는 배열이 아닐 때
           _pairs.push(
             `${_key}=${encodeURIComponent(
-              returnBlankIfNullOrUndefined(_element),
-            )}`,
-          )
+              returnBlankIfNullOrUndefined(_element)
+            )}`
+          );
         }
       }
     }
@@ -660,66 +660,66 @@ class Skript {
     // 주어진 값이 null 또는 undefined 라면 공백 문자열을, 그렇지 않다면 주어진 값 그대로를 반환하는 메소드
     function returnBlankIfNullOrUndefined(val: any): any {
       if (val === null || val === undefined) {
-        return ''
+        return "";
       } else {
-        return val
+        return val;
       }
     }
 
     // 주어진 값이 특별취급해야하는 값인지 체크하는 메소드
     function isSpecialElement(val: any): boolean {
       if (!val) {
-        return false
+        return false;
       }
 
       // native Date 또는 MMDate 객체 체크
       return (
         val.constructor === Date ||
-        (typeof val.getDateInstance === 'function' &&
+        (typeof val.getDateInstance === "function" &&
           val.getDateInstance() &&
           val.getDateInstance().constructor === Date)
-      )
+      );
     }
 
     // 특별취급해야하는 값을 보정하는 함수
     function getSpecialElementValue(val: any): any {
       if (val === null || val === undefined) {
-        return ''
+        return "";
       }
 
       if (val.constructor === Date) {
         // 네이티브 Date 값 처리
-        const year = val.getFullYear()
+        const year = val.getFullYear();
         if (isNaN(year)) {
-          return 'Invalid Date'
+          return "Invalid Date";
         }
 
-        let month = '' + (val.getMonth() + 1)
-        if (month.length < 2) month = '0' + month
+        let month = "" + (val.getMonth() + 1);
+        if (month.length < 2) month = "0" + month;
 
-        let date = '' + val.getDate()
-        if (date.length < 2) date = '0' + date
+        let date = "" + val.getDate();
+        if (date.length < 2) date = "0" + date;
 
-        let hour = '' + val.getHours()
-        if (hour.length < 2) hour = '0' + hour
+        let hour = "" + val.getHours();
+        if (hour.length < 2) hour = "0" + hour;
 
-        let minute = '' + val.getMinutes()
-        if (minute.length < 2) minute = '0' + minute
+        let minute = "" + val.getMinutes();
+        if (minute.length < 2) minute = "0" + minute;
 
-        let second = '' + val.getSeconds()
-        if (second.length < 2) second = '0' + second
+        let second = "" + val.getSeconds();
+        if (second.length < 2) second = "0" + second;
 
-        return `${year}-${month}-${date} ${hour}:${minute}:${second}`
+        return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
       } else if (
         // MMDate 값 체크
-        typeof val.getDateInstance === 'function' &&
+        typeof val.getDateInstance === "function" &&
         val.getDateInstance() &&
         val.getDateInstance().constructor === Date
       ) {
-        return returnBlankIfNullOrUndefined(val)
+        return returnBlankIfNullOrUndefined(val);
       } else {
         // 그 외 기본처리
-        return returnBlankIfNullOrUndefined(val)
+        return returnBlankIfNullOrUndefined(val);
       }
     }
   }
@@ -757,33 +757,35 @@ class Skript {
    */
   syncQueryParamsToPage(
     customHandlers?: {
-      [name: string]: (name: string, value: any, seq: number) => void
+      [name: string]: (name: string, value: any, seq: number) => void;
     },
-    querystring?: string,
+    querystring?: string
   ) {
     // 분석할 쿼리 파라미터 문자열 획득
-    const query = querystring || location.search
+    const query = querystring || location.search;
 
     // 쿼리 파라미터 문자열을 섹션별 분할
-    const sections = query.replace(/^\?/, '').split('&')
+    const sections = query.replace(/^\?/, "").split("&");
 
     // 가변길이 배열 형태 파라미터를 처리하기 위한 카운팅 객체 선언
-    const matchCounts: any = {}
+    const matchCounts: any = {};
 
     // 분할된 섹션을 key value 페어로 나눠 각각 처리
     sections
-      .map((section) => section.split('='))
+      .map((section) => section.split("="))
       .forEach((pair) => {
         // 키 (폼 요소의 name 에 해당)
-        const key = decodeURIComponent(pair[0])
+        const key = decodeURIComponent(pair[0]);
         // 해당 키의 값
-        const value = decodeURIComponent(decodeURI(pair[1]).replace(/\+/g, ' '))
+        const value = decodeURIComponent(
+          decodeURI(pair[1]).replace(/\+/g, " ")
+        );
 
         // 카운팅 객체값 적용
         if (matchCounts[key]) {
-          matchCounts[key] = matchCounts[key] + 1
+          matchCounts[key] = matchCounts[key] + 1;
         } else {
-          matchCounts[key] = 1
+          matchCounts[key] = 1;
         }
 
         if (customHandlers) {
@@ -791,19 +793,19 @@ class Skript {
           for (const handlerKey in customHandlers) {
             if (
               customHandlers.hasOwnProperty(handlerKey) &&
-              typeof customHandlers[handlerKey] === 'function'
+              typeof customHandlers[handlerKey] === "function"
             ) {
               const reg = new RegExp(
                 handlerKey
-                  .split('[*]')
+                  .split("[*]")
                   .map((section) =>
-                    section.replace(/\[/g, '\\[').replace(/\]/g, '\\]'),
+                    section.replace(/\[/g, "\\[").replace(/\]/g, "\\]")
                   )
-                  .join('\\[([^\\]]*)\\]') + '$',
-              )
+                  .join("\\[([^\\]]*)\\]") + "$"
+              );
 
               if (key.match(reg)) {
-                return customHandlers[handlerKey](key, value, matchCounts[key])
+                return customHandlers[handlerKey](key, value, matchCounts[key]);
               }
             }
           }
@@ -813,48 +815,48 @@ class Skript {
         if (
           customHandlers &&
           customHandlers[key] &&
-          typeof customHandlers[key] === 'function'
+          typeof customHandlers[key] === "function"
         ) {
-          return customHandlers[key](key, value, matchCounts[key])
+          return customHandlers[key](key, value, matchCounts[key]);
         }
 
         // 해당 키를 가진 폼 요소를 조회
-        const matchElements = document.querySelectorAll(`[name="${key}"]`)
-        let matchElement = null
+        const matchElements = document.querySelectorAll(`[name="${key}"]`);
+        let matchElement = null;
 
         // 일치하는 폼 요소의 갯수가 다수라면 배열 형태로 처리함
         if (matchElements.length > 1) {
-          matchElement = matchElements[matchCounts[key] - 1]
+          matchElement = matchElements[matchCounts[key] - 1];
         } else {
-          matchElement = matchElements[0]
+          matchElement = matchElements[0];
         }
 
         // 폼 요소 타입별 처리
         if (matchElement instanceof HTMLInputElement) {
           // input 타입 요소의 타입별 처리
-          switch (matchElement.getAttribute('type')) {
-            case 'checkbox':
-            case 'radio':
+          switch (matchElement.getAttribute("type")) {
+            case "checkbox":
+            case "radio":
               let target = document.querySelector(
-                `[name="${key}"][value="${value}"]`,
-              )
+                `[name="${key}"][value="${value}"]`
+              );
               if (target instanceof HTMLInputElement) {
-                target.checked = true
+                target.checked = true;
               }
-              break
+              break;
 
             default:
-              matchElement.value = value
-              break
+              matchElement.value = value;
+              break;
           }
         } else if (matchElement instanceof HTMLSelectElement) {
           // select 타입 요소의 처리
-          matchElement.value = value
+          matchElement.value = value;
         } else if (matchElement instanceof HTMLTextAreaElement) {
           // textarea 타입 요소의 처리
-          matchElement.value = value
+          matchElement.value = value;
         }
-      })
+      });
   }
 
   /**
@@ -883,27 +885,27 @@ class Skript {
    */
   extract(selector: string, options?: ExtractOption): object | FormData {
     // 추출 대상 엘리먼트를 획득
-    const element = document.querySelector(selector)
+    const element = document.querySelector(selector);
 
     // 기본 옵션 세팅
     const opt = options || {
-      dataType: 'json',
+      dataType: "json",
       appends: {},
-    }
+    };
 
     // 추출 대상 엘리먼트가 존재하지 않으면 예외처리
     if (element === null) {
-      throw new Error('대상 엘리먼트가 존재하지 않습니다.')
-    } else if (typeof opt.dataType !== 'string') {
-      throw new Error('반환 데이터 타입이 유효하지 않습니다')
+      throw new Error("대상 엘리먼트가 존재하지 않습니다.");
+    } else if (typeof opt.dataType !== "string") {
+      throw new Error("반환 데이터 타입이 유효하지 않습니다");
     }
 
-    if (opt.dataType.toLowerCase() === 'json') {
-      return this.extractJson(element!, opt.appends)
-    } else if (opt.dataType.toLowerCase() === 'formdata') {
-      return this.extractFormData(element!, opt.appends)
+    if (opt.dataType.toLowerCase() === "json") {
+      return this.extractJson(element!, opt.appends);
+    } else if (opt.dataType.toLowerCase() === "formdata") {
+      return this.extractFormData(element!, opt.appends);
     } else {
-      throw new Error('반환 데이터 타입이 유효하지 않습니다')
+      throw new Error("반환 데이터 타입이 유효하지 않습니다");
     }
   }
 
@@ -923,84 +925,84 @@ class Skript {
    **/
   extractJson(element: Element, appends?: any, includeEmptyValue?: boolean) {
     // 대상 엘리먼트 하위 name 속성을 가진 요소를 조회
-    const namedElements = element.querySelectorAll('[name]')
+    const namedElements = element.querySelectorAll("[name]");
 
     // 1. 추출결과 객체로 폼데이터 생성
-    let extracted = appends || {}
+    let extracted = appends || {};
 
     // 2. 자식 엘리멘트 순회
     for (let i = 0; i < namedElements.length; i++) {
       // 2-1. 자식 엘리먼트
-      const el = namedElements[i]
+      const el = namedElements[i];
 
       // 2-2. 자식 엘리먼트 name 값, 다중 name 여부 획득
-      let elName = el.getAttribute('name') || ''
-      const isMultiple = elName.indexOf('[]') !== -1
-      elName = elName.replace('[]', '')
+      let elName = el.getAttribute("name") || "";
+      const isMultiple = elName.indexOf("[]") !== -1;
+      elName = elName.replace("[]", "");
 
       // 2-3. 자식 엘리먼트 유형에 따른 분기 후 데이터 할당
       if (
         el instanceof HTMLSelectElement &&
-        (includeEmptyValue || (el.value && el.value != ''))
+        (includeEmptyValue || (el.value && el.value != ""))
       ) {
         // 2-3-1. select 엘리먼트는 value 로 할당
-        extracted[elName] = el.value
+        extracted[elName] = el.value;
       } else if (el instanceof HTMLInputElement) {
-        switch ((el.getAttribute('type') || '').toLowerCase()) {
+        switch ((el.getAttribute("type") || "").toLowerCase()) {
           // 2-3-2. checkbox 타입은 다중 name 일 경우 배열로, 단일 name 일 경우 단일 값으로 할당
-          case 'checkbox':
+          case "checkbox":
             if (el.checked) {
               if (isMultiple) {
                 extracted[elName] = Array.isArray(extracted[elName])
                   ? extracted[elName]
-                  : ([] as Array<any>)
-                extracted[elName].push(el.value)
+                  : ([] as Array<any>);
+                extracted[elName].push(el.value);
               } else {
-                extracted[elName] = el.value
+                extracted[elName] = el.value;
               }
             }
-            break
+            break;
           // 2-3-3. radio 타입은 checked 된 값을 전달
-          case 'radio':
+          case "radio":
             if (el.checked) {
-              extracted[elName] = el.value
+              extracted[elName] = el.value;
             }
-            break
+            break;
           // 2-3-4. text, password, email 타입은 값 그대로를 전달
-          case 'text':
-          case 'password':
-          case 'email':
-          case 'hidden':
-          case 'search':
-          case 'number':
-          case 'tel':
-          case 'date':
-          case 'datetime':
-          case 'datetime-local':
-            if (includeEmptyValue || (el.value && el.value != '')) {
+          case "text":
+          case "password":
+          case "email":
+          case "hidden":
+          case "search":
+          case "number":
+          case "tel":
+          case "date":
+          case "datetime":
+          case "datetime-local":
+            if (includeEmptyValue || (el.value && el.value != "")) {
               if (isMultiple) {
                 extracted[elName] = Array.isArray(extracted[elName])
                   ? extracted[elName]
-                  : ([] as Array<any>)
-                extracted[elName].push(el.value)
+                  : ([] as Array<any>);
+                extracted[elName].push(el.value);
               } else {
-                extracted[elName] = el.value
+                extracted[elName] = el.value;
               }
             }
-            break
-          // 2-3-6. file 타입 json 변환은 .. 
-          case 'file':
-            break
+            break;
+          // 2-3-6. file 타입 json 변환은 ..
+          case "file":
+            break;
           default:
         }
       } else if (el instanceof HTMLTextAreaElement) {
-        if (includeEmptyValue || (el.value && el.value != '')) {
-          extracted[elName] = el.value
+        if (includeEmptyValue || (el.value && el.value != "")) {
+          extracted[elName] = el.value;
         }
       }
     }
 
-    return extracted
+    return extracted;
   }
 
   /**
@@ -1016,90 +1018,95 @@ class Skript {
    * })
    * ```
    **/
-  extractFormData(
+  async extractFormData(
     element: Element,
     appends?: any,
     fileHandler?: (
       fd: FormData,
       name: string,
       files: FileList | null,
-      element: HTMLInputElement,
-    ) => void,
+      element: HTMLInputElement
+    ) => Promise<void> | void
   ) {
     // 대상 엘리먼트 하위 name 속성을 가진 요소를 조회
-    const namedElements = element.querySelectorAll('[name]')
+    const namedElements = element.querySelectorAll("[name]");
 
     // 1. 추출결과 객체로 폼데이터 생성
-    let extracted = appends || {}
-    let formData = new FormData()
+    let extracted = appends || {};
+    let formData = new FormData();
 
     for (let key in extracted) {
-      formData.append(key, extracted[key])
+      formData.append(key, extracted[key]);
     }
 
-    let fileCount = 0
-    let fileOfContainer: any = {}
+    let fileCount = 0;
+    let fileOfContainer: any = {};
 
     // 2. 자식 엘리멘트 순회
     for (let i = 0; i < namedElements.length; i++) {
       // 2-1. 자식 엘리먼트
-      const el = namedElements[i]
+      const el = namedElements[i];
 
       // 2-2. 자식 엘리먼트 name 값, 다중 name 여부 획득
-      let elName = el.getAttribute('name') || ''
-      const isMultiple = elName.indexOf('[]') !== -1
+      let elName = el.getAttribute("name") || "";
+      const isMultiple = elName.indexOf("[]") !== -1;
       //   elName = elName.replace('[]', '')
 
       // 2-3. 자식 엘리먼트 유형에 따른 분기 후 데이터 할당
-      if (el instanceof HTMLSelectElement && el.value && el.value != '') {
+      if (el instanceof HTMLSelectElement && el.value && el.value != "") {
         // 2-3-1. select 엘리먼트는 value 로 할당
-        formData.append(elName, el.value)
+        formData.append(elName, el.value);
       } else if (
         el instanceof HTMLInputElement ||
-        Object.getPrototypeOf(el).toString() == '[object HTMLInputElement]'
+        Object.getPrototypeOf(el).toString() == "[object HTMLInputElement]"
       ) {
-        const inputElement = el as HTMLInputElement
+        const inputElement = el as HTMLInputElement;
 
-        switch ((el.getAttribute('type') || '').toLowerCase()) {
+        switch ((el.getAttribute("type") || "").toLowerCase()) {
           // 2-3-2. checkbox 타입은 다중 name 일 경우 배열로, 단일 name 일 경우 단일 값으로 할당
-          case 'checkbox':
+          case "checkbox":
             if (inputElement.checked) {
               if (isMultiple) {
-                formData.append(elName, inputElement.value)
+                formData.append(elName, inputElement.value);
               } else {
-                formData.delete(elName)
-                formData.append(elName, inputElement.value)
+                formData.delete(elName);
+                formData.append(elName, inputElement.value);
               }
             }
-            break
+            break;
           // 2-3-3. radio 타입은 checked 된 값을 전달
-          case 'radio':
+          case "radio":
             if (inputElement.checked) {
-              formData.append(elName, inputElement.value)
+              formData.append(elName, inputElement.value);
             }
-            break
+            break;
           // 2-3-4. text, password, email 타입은 값 그대로를 전달
-          case 'text':
-          case 'password':
-          case 'email':
-          case 'hidden':
-          case 'search':
-          case 'tel':
-          case 'date':
-          case 'datetime':
-          case 'datetime-local':
-            if (inputElement.value && inputElement.value != '') {
-              formData.append(elName, inputElement.value)
+          case "text":
+          case "password":
+          case "email":
+          case "hidden":
+          case "search":
+          case "tel":
+          case "date":
+          case "datetime":
+          case "datetime-local":
+            if (inputElement.value && inputElement.value != "") {
+              formData.append(elName, inputElement.value);
             }
-            break
+            break;
           // 2-3-6. file 타입은 추후 보완
-          case 'file':
+          case "file":
             if (inputElement.files) {
-              fileCount += inputElement.files.length
+              fileCount += inputElement.files.length;
             }
 
             if (fileHandler) {
-              fileHandler(formData, elName, inputElement.files, inputElement)
+              await fileHandler(
+                formData,
+                elName,
+                inputElement.files,
+                inputElement
+              );
             } else {
               if (inputElement.files && inputElement.files.length > 0) {
                 if (inputElement.files.length > 1) {
@@ -1108,23 +1115,26 @@ class Skript {
                     index < inputElement.files.length;
                     index++
                   ) {
-                    const file = inputElement.files[index]
-                    formData.append(`${elName}[${index}]`, file)
+                    const file = inputElement.files[index];
+                    formData.append(`${elName}[${index}]`, file);
                   }
                 } else {
-                  formData.append(elName, inputElement.files[0])
+                  formData.append(elName, inputElement.files[0]);
                 }
               }
             }
-            break
+            break;
           default:
         }
       } else if (el instanceof HTMLTextAreaElement) {
-        if (el.value && el.value != '') {
-          formData.append(elName, el.value)
+        if (el.value && el.value != "") {
+          formData.append(elName, el.value);
         }
-      } else if (el instanceof HTMLElement && el.hasAttribute('contenteditable')) {
-        formData.append(elName, el.innerText)
+      } else if (
+        el instanceof HTMLElement &&
+        el.hasAttribute("contenteditable")
+      ) {
+        formData.append(elName, el.innerText);
       }
     }
 
@@ -1133,26 +1143,26 @@ class Skript {
       let metadata = {
         totalCount: fileCount,
         files: {} as any,
-      }
+      };
 
       for (let formName in fileOfContainer) {
-        metadata.files[formName] = []
+        metadata.files[formName] = [];
         for (let i = 0; i < fileOfContainer[formName].length; i++) {
-          const info = fileOfContainer[formName][i]
+          const info = fileOfContainer[formName][i];
           metadata.files[formName].push({
             isNew: info instanceof File,
             url:
               info instanceof File
                 ? null
-                : (info.name || '').replace(/\?.*/, ''),
-          })
+                : (info.name || "").replace(/\?.*/, ""),
+          });
         }
       }
 
-      formData.append('metadata_files', JSON.stringify(metadata))
+      formData.append("metadata_files", JSON.stringify(metadata));
     }
 
-    return formData
+    return formData;
   }
 
   /**
@@ -1182,9 +1192,9 @@ class Skript {
   wait(second: number): Promise<number> {
     return new Promise((resolve) => {
       const timeoutId = window.setTimeout(() => {
-        resolve(timeoutId)
-      }, second * 1000)
-    })
+        resolve(timeoutId);
+      }, second * 1000);
+    });
   }
 
   /**
@@ -1202,21 +1212,21 @@ class Skript {
    * ```
    */
   range(start: number, end: number): number[] {
-    if (typeof start !== 'number') {
-      throw new Error('시작값이 없거나 숫자가 아닙니다.')
-    } else if (typeof end !== 'number') {
-      throw new Error('종료값이 없거나 숫자가 아닙니다.')
+    if (typeof start !== "number") {
+      throw new Error("시작값이 없거나 숫자가 아닙니다.");
+    } else if (typeof end !== "number") {
+      throw new Error("종료값이 없거나 숫자가 아닙니다.");
     } else if (end < start) {
-      throw new Error('시작값이 종료값보다 큽니다.')
+      throw new Error("시작값이 종료값보다 큽니다.");
     }
 
-    const arr: number[] = []
+    const arr: number[] = [];
 
     for (let num = start; num <= end; num++) {
-      arr.push(num)
+      arr.push(num);
     }
 
-    return arr
+    return arr;
   }
 
   /**
@@ -1235,20 +1245,20 @@ class Skript {
    * ```
    */
   random(min: number, max: number, isFloor: boolean = true): number {
-    if (typeof min !== 'number') {
-      throw new Error('최소값이 없거나 숫자가 아닙니다.')
-    } else if (typeof max !== 'number') {
-      throw new Error('최대값이 없거나 숫자가 아닙니다.')
+    if (typeof min !== "number") {
+      throw new Error("최소값이 없거나 숫자가 아닙니다.");
+    } else if (typeof max !== "number") {
+      throw new Error("최대값이 없거나 숫자가 아닙니다.");
     } else if (max < min) {
-      throw new Error('최소값이 최대값보다 큽니다.')
+      throw new Error("최소값이 최대값보다 큽니다.");
     }
 
-    const interval = max - min + 1
+    const interval = max - min + 1;
     return (
       (isFloor === true
         ? Math.floor(Math.random() * interval)
         : Math.random() * interval) + min
-    )
+    );
   }
 
   /**
@@ -1303,37 +1313,37 @@ class Skript {
   groupBy(
     arr: any[],
     keyName: string,
-    keyModifier?: (keyValue: string) => string,
+    keyModifier?: (keyValue: string) => string
   ): { [keyValue: string]: any } {
-    const groupped: { [groupKey: string]: any } = {}
+    const groupped: { [groupKey: string]: any } = {};
     Array.prototype.forEach.call(arr, (item: any) => {
-      let confirmedKey = item[keyName]
+      let confirmedKey = item[keyName];
 
       // 중첩키 처리(ex: arr.1.id)
-      if (('' + keyName).indexOf('.') > -1) {
-        confirmedKey = item
-        keyName.split('.').forEach((splitedKey) => {
+      if (("" + keyName).indexOf(".") > -1) {
+        confirmedKey = item;
+        keyName.split(".").forEach((splitedKey) => {
           if (confirmedKey[splitedKey]) {
-            confirmedKey = confirmedKey[splitedKey]
+            confirmedKey = confirmedKey[splitedKey];
           } else {
-            confirmedKey = ''
+            confirmedKey = "";
           }
-        })
+        });
       }
 
       // 키값 재구성 함수가 지정되었다면 적용
-      if (typeof keyModifier === 'function') {
-        confirmedKey = keyModifier(confirmedKey)
+      if (typeof keyModifier === "function") {
+        confirmedKey = keyModifier(confirmedKey);
       }
 
       if (groupped[confirmedKey]) {
-        groupped[confirmedKey].push(item)
+        groupped[confirmedKey].push(item);
       } else {
-        groupped[confirmedKey] = [item]
+        groupped[confirmedKey] = [item];
       }
-    })
+    });
 
-    return groupped
+    return groupped;
   }
 
   /**
@@ -1364,33 +1374,33 @@ class Skript {
       tester: () => true,
 
       // 종료 메소드가 할당되지 않으면 기본 처리
-      endHandler: () => { },
+      endHandler: () => {},
 
       // 지정된 액션을 실행
       do: function (action: (count?: number) => void) {
         this.intervalId = window.setInterval(() => {
           if (this.tester() === false) {
-            clearInterval(this.intervalId)
-            this.endHandler()
+            clearInterval(this.intervalId);
+            this.endHandler();
           } else {
-            action(this.count++)
+            action(this.count++);
           }
-        }, interval * 1000)
-        return this
+        }, interval * 1000);
+        return this;
       },
       until: function (tester: () => boolean) {
-        if (typeof tester === 'function') {
-          this.tester = tester
+        if (typeof tester === "function") {
+          this.tester = tester;
         }
-        return this
+        return this;
       },
       whenEnd: function (endHandler: () => void) {
-        if (typeof endHandler === 'function') {
-          this.endHandler = endHandler
+        if (typeof endHandler === "function") {
+          this.endHandler = endHandler;
         }
-        return this
+        return this;
       },
-    }
+    };
   }
 
   /**
@@ -1416,70 +1426,70 @@ class Skript {
     checkTarget: string | (() => boolean) | (string | (() => boolean))[],
     task: Function,
     tryCount: number = 0,
-    intervalSecond: number = 1,
+    intervalSecond: number = 1
   ) {
     const checkTargetConfirmed =
-      typeof checkTarget === 'string' || typeof checkTarget === 'function'
+      typeof checkTarget === "string" || typeof checkTarget === "function"
         ? [checkTarget]
-        : checkTarget
+        : checkTarget;
 
-    let count = 0
+    let count = 0;
 
     const intervalId = setInterval(function () {
       // 재시도횟수를 초과했으면 종료
       if (tryCount > 0 && count > tryCount) {
-        clearInterval(intervalId)
+        clearInterval(intervalId);
       }
 
       for (let index = 0; index < checkTargetConfirmed.length; index++) {
-        if (typeof checkTargetConfirmed[index] === 'function') {
+        if (typeof checkTargetConfirmed[index] === "function") {
           try {
             if ((checkTargetConfirmed[index] as Function)() !== true) {
-              count++
-              return
+              count++;
+              return;
             }
           } catch (error) {
-            console.error(error)
-            clearInterval(intervalId)
+            console.error(error);
+            clearInterval(intervalId);
           }
-        } else if (typeof checkTargetConfirmed[index] === 'string') {
-          const targetString = checkTargetConfirmed[index] as string
-          const splited = targetString.split('.')
+        } else if (typeof checkTargetConfirmed[index] === "string") {
+          const targetString = checkTargetConfirmed[index] as string;
+          const splited = targetString.split(".");
           // kakaoT.key => ['kakaoT', 'key']
 
-          let targetObj: any = (window as any)[splited[0]]
+          let targetObj: any = (window as any)[splited[0]];
 
           for (let j = 1; j < splited.length; j++) {
-            targetObj = targetObj[splited[j]]
+            targetObj = targetObj[splited[j]];
             if (targetObj === null || targetObj === undefined) {
-              count++
-              return
+              count++;
+              return;
             }
           }
 
           if (targetObj === null || targetObj === undefined) {
-            count++
-            return
+            count++;
+            return;
           }
         } else {
-          clearInterval(intervalId)
+          clearInterval(intervalId);
           throw new Error(
             `Unexpected Type [${typeof checkTargetConfirmed[
-            index
-            ]}] : 문자열 또는 boolean을 반환하는 함수여야합니다.`,
-          )
+              index
+            ]}] : 문자열 또는 boolean을 반환하는 함수여야합니다.`
+          );
         }
       }
 
       // checkTargetConfirmed 모두 null 또는 undefined가 아니면 task를 실행
       try {
-        task()
+        task();
       } catch (error) {
-        console.error(error)
+        console.error(error);
       } finally {
-        clearInterval(intervalId)
+        clearInterval(intervalId);
       }
-    }, intervalSecond * 1000)
+    }, intervalSecond * 1000);
   }
 
   /**
@@ -1487,13 +1497,14 @@ class Skript {
    * @returns {string}
    */
   uuidv4(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (
-      c,
-    ) {
-      var r = (Math.random() * 16) | 0,
-        v = c == 'x' ? r : (r & 0x3) | 0x8
-      return v.toString(16)
-    })
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
   }
 
   /**
@@ -1528,14 +1539,14 @@ class Skript {
      */
     pluckValue(
       cssSelector: string,
-      filter?: (el: Element) => boolean,
+      filter?: (el: Element) => boolean
     ): Array<any> {
-      const result: Array<any> = []
-      const targets = document.querySelectorAll(cssSelector)
+      const result: Array<any> = [];
+      const targets = document.querySelectorAll(cssSelector);
 
       targets.forEach((el, index, parent) => {
-        if (typeof filter == 'function' && filter(el) !== true) {
-          return
+        if (typeof filter == "function" && filter(el) !== true) {
+          return;
         }
 
         if (
@@ -1543,13 +1554,13 @@ class Skript {
           el instanceof HTMLTextAreaElement ||
           el instanceof HTMLSelectElement
         ) {
-          result.push(el.value)
+          result.push(el.value);
         } else {
-          result.push(el.nodeValue)
+          result.push(el.nodeValue);
         }
-      })
+      });
 
-      return result
+      return result;
     },
 
     /**
@@ -1577,20 +1588,20 @@ class Skript {
     pluckAttribute(
       cssSelector: string,
       attributeName: string,
-      filter?: (el: Element) => boolean,
+      filter?: (el: Element) => boolean
     ): Array<any> {
-      const result: Array<any> = []
-      const targets = document.querySelectorAll(cssSelector)
+      const result: Array<any> = [];
+      const targets = document.querySelectorAll(cssSelector);
 
       targets.forEach((el, index, parent) => {
-        if (typeof filter == 'function' && filter(el) !== true) {
-          return
+        if (typeof filter == "function" && filter(el) !== true) {
+          return;
         }
 
-        result.push(el.getAttribute(attributeName))
-      })
+        result.push(el.getAttribute(attributeName));
+      });
 
-      return result
+      return result;
     },
 
     /**
@@ -1620,35 +1631,35 @@ class Skript {
      */
     count(
       selector: string | any[],
-      filter?: (item: any, i?: number) => boolean,
+      filter?: (item: any, i?: number) => boolean
     ): number {
-      if (typeof selector !== 'string' && !selector.length) {
+      if (typeof selector !== "string" && !selector.length) {
         throw new Error(
-          `'${selector}(${typeof selector})' - 유효한 셀렉터가 아닙니다.`,
-        )
+          `'${selector}(${typeof selector})' - 유효한 셀렉터가 아닙니다.`
+        );
       }
 
       // 대상 쿼리
       const targets =
-        typeof selector === 'string'
+        typeof selector === "string"
           ? document.querySelectorAll(selector)
-          : selector
-      let count = targets.length
+          : selector;
+      let count = targets.length;
 
       // 추가 필터 함수가 전달되었다면 실행
-      if (typeof filter == 'function') {
-        count = 0
+      if (typeof filter == "function") {
+        count = 0;
         // 타겟을 순회하며 필터에 해당하는 갯수를 센다
         for (let index = 0; index < targets.length; index++) {
-          const target = targets[index]
+          const target = targets[index];
           if (filter!(target, index) === true) {
-            count++
+            count++;
           }
         }
       }
 
       // 최종 갯수 반환
-      return count
+      return count;
     },
 
     /**
@@ -1663,14 +1674,15 @@ class Skript {
      * ```
      */
     getValue(selector: string, defaultValue: any = null): any {
-      const targetEl: HTMLInputElement | null = document.querySelector(selector)
+      const targetEl: HTMLInputElement | null =
+        document.querySelector(selector);
       if (targetEl) {
-        return targetEl.value ? targetEl.value : defaultValue
+        return targetEl.value ? targetEl.value : defaultValue;
       } else {
-        return defaultValue
+        return defaultValue;
       }
     },
-  }
+  };
 
   /**
    * 숫자 관련 헬퍼함수
@@ -1687,18 +1699,18 @@ class Skript {
      * ```
      */
     comma(value: number): string {
-      const numberedValue = Number.parseFloat('' + value)
+      const numberedValue = Number.parseFloat("" + value);
       if (isNaN(numberedValue)) {
-        return ''
+        return "";
       } else if (Number.isFinite(numberedValue)) {
-        return numberedValue.toLocaleString()
+        return numberedValue.toLocaleString();
       } else {
         return numberedValue
           .toString()
-          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') // toLocaleString이 속도가 빠름
+          .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"); // toLocaleString이 속도가 빠름
       }
     },
-  }
+  };
 
   /**
    * 문자열 관련 헬퍼함수
@@ -1720,10 +1732,10 @@ class Skript {
      */
     contains(value: string, check: string): boolean {
       // 문자열로 확정보정
-      value = '' + value
-      check = '' + check
+      value = "" + value;
+      check = "" + check;
 
-      return value.indexOf(check) > -1
+      return value.indexOf(check) > -1;
     },
 
     /**
@@ -1742,15 +1754,15 @@ class Skript {
      */
     containsAll(value: string, checks: string[]): boolean {
       // 문자열로 확정보정
-      value = '' + value
+      value = "" + value;
 
       for (let index = 0; index < checks.length; index++) {
-        const check = '' + checks[index]
-        if (check !== '' && value.indexOf(check) == -1) {
-          return false
+        const check = "" + checks[index];
+        if (check !== "" && value.indexOf(check) == -1) {
+          return false;
         }
       }
-      return true
+      return true;
     },
 
     /**
@@ -1769,15 +1781,15 @@ class Skript {
      */
     containsAny(value: string, checks: string[]): boolean {
       // 문자열로 확정보정
-      value = '' + value
+      value = "" + value;
 
       for (let index = 0; index < checks.length; index++) {
-        const check = '' + checks[index]
-        if (check !== '' && value.indexOf(check) > -1) {
-          return true
+        const check = "" + checks[index];
+        if (check !== "" && value.indexOf(check) > -1) {
+          return true;
         }
       }
-      return false
+      return false;
     },
 
     /**
@@ -1796,21 +1808,21 @@ class Skript {
      */
     endsWith(value: string, check: string | string[]): boolean {
       // 문자열로 확정보정
-      value = '' + value
+      value = "" + value;
 
-      const listing = typeof check === 'string' ? [check] : check || []
+      const listing = typeof check === "string" ? [check] : check || [];
 
       for (let index = 0; index < listing.length; index++) {
-        const check = '' + (listing[index] || '')
+        const check = "" + (listing[index] || "");
         if (
-          check !== '' &&
+          check !== "" &&
           value.lastIndexOf(check) === value.length - check.length
         ) {
-          return true
+          return true;
         }
       }
 
-      return false
+      return false;
     },
 
     /**
@@ -1829,10 +1841,10 @@ class Skript {
      */
     finish(value: string, ends: string): string {
       // 문자열로 확정보정
-      value = '' + value
-      ends = '' + ends
+      value = "" + value;
+      ends = "" + ends;
 
-      return this.endsWith(value, ends) ? value : value + ends
+      return this.endsWith(value, ends) ? value : value + ends;
     },
 
     /**
@@ -1851,18 +1863,18 @@ class Skript {
      */
     startsWith(value: string, check: string | string[]): boolean {
       // 문자열로 확정보정
-      value = '' + value
+      value = "" + value;
 
-      const listing = typeof check === 'string' ? [check] : check || []
+      const listing = typeof check === "string" ? [check] : check || [];
 
       for (let index = 0; index < listing.length; index++) {
-        const check = '' + (listing[index] || '')
-        if (check !== '' && value.indexOf(check) === 0) {
-          return true
+        const check = "" + (listing[index] || "");
+        if (check !== "" && value.indexOf(check) === 0) {
+          return true;
         }
       }
 
-      return false
+      return false;
     },
 
     /**
@@ -1881,10 +1893,10 @@ class Skript {
      */
     start(value: string, starts: string): string {
       // 문자열로 확정보정
-      value = '' + value
-      starts = '' + starts
+      value = "" + value;
+      starts = "" + starts;
 
-      return this.startsWith(value, starts) ? value : starts + value
+      return this.startsWith(value, starts) ? value : starts + value;
     },
 
     /**
@@ -1902,15 +1914,15 @@ class Skript {
     limit(
       value: string,
       limitLength: number,
-      limitMark: string = '...',
+      limitMark: string = "..."
     ): string {
       // 문자열로 확정보정
-      value = '' + value
+      value = "" + value;
 
       if (value.length > limitLength) {
-        return value.substring(0, limitLength) + limitMark
+        return value.substring(0, limitLength) + limitMark;
       } else {
-        return value
+        return value;
       }
     },
 
@@ -1929,15 +1941,15 @@ class Skript {
     reverseLimit(
       value: string,
       limitLength: number,
-      limitMark: string = '...',
+      limitMark: string = "..."
     ): string {
       // 문자열로 확정보정
-      value = '' + value
+      value = "" + value;
 
       if (value.length > limitLength) {
-        return limitMark + value.substring(value.length - limitLength)
+        return limitMark + value.substring(value.length - limitLength);
       } else {
-        return value
+        return value;
       }
     },
 
@@ -1957,13 +1969,13 @@ class Skript {
     wrap(
       value: string,
       target: string,
-      before: string = '',
-      after: string = '',
+      before: string = "",
+      after: string = ""
     ): string {
       // 문자열로 확정보정
-      value = '' + value
+      value = "" + value;
 
-      return value.split(target).join(before + target + after)
+      return value.split(target).join(before + target + after);
     },
 
     /**
@@ -1984,7 +1996,7 @@ class Skript {
      * ```
      */
     padLeft(value: string, length: number, padString: string): string {
-      return this.pad(value, length, padString, 'left')
+      return this.pad(value, length, padString, "left");
     },
 
     /**
@@ -2005,7 +2017,7 @@ class Skript {
      * ```
      */
     padRight(value: string, length: number, padString: string): string {
-      return this.pad(value, length, padString, 'right')
+      return this.pad(value, length, padString, "right");
     },
 
     /**
@@ -2021,31 +2033,31 @@ class Skript {
       value: string,
       length: number,
       padString: string,
-      direction: string,
+      direction: string
     ): string {
       // 보충문자 체크
-      padString = padString || ''
+      padString = padString || "";
       if (isNaN(length) || length < 1) {
-        throw new Error('패딩 길이가 유효하지 않습니다.')
-      } else if (padString === '') {
-        throw new Error('패딩 문자가 지정되지 않았습니다.')
-      } else if (direction !== 'left' && direction !== 'right') {
-        throw new Error('패딩 방향이 유효하지 않습니다.')
+        throw new Error("패딩 길이가 유효하지 않습니다.");
+      } else if (padString === "") {
+        throw new Error("패딩 문자가 지정되지 않았습니다.");
+      } else if (direction !== "left" && direction !== "right") {
+        throw new Error("패딩 방향이 유효하지 않습니다.");
       }
 
       // 문자열로 확정보정
-      value = '' + value
+      value = "" + value;
 
       // 최소길이에 도달할 때까지 재귀호출
       if (value.length < length) {
         return this.pad(
-          direction === 'right' ? value + padString : padString + value,
+          direction === "right" ? value + padString : padString + value,
           length,
           padString,
-          direction,
-        )
+          direction
+        );
       } else {
-        return value
+        return value;
       }
     },
 
@@ -2061,7 +2073,7 @@ class Skript {
      * ```
      */
     left(text: string, length: number): string {
-      return ('' + text).substring(0, length)
+      return ("" + text).substring(0, length);
     },
 
     /**
@@ -2076,10 +2088,10 @@ class Skript {
      * ```
      */
     right(text: string, length: number): string {
-      text = '' + text
-      return text.substring(text.length - length, length)
+      text = "" + text;
+      return text.substring(text.length - length, length);
     },
-  }
+  };
 
   /**
    * 카운트다운 헬퍼
@@ -2104,56 +2116,58 @@ class Skript {
     targetDatetime: Date | string,
     intervalType: string,
     countdownHandler: (diffInmillisecond: number, diffs: any) => void,
-    excuteOnInitialized: boolean = false,
+    excuteOnInitialized: boolean = false
   ): Promise<void> {
     // Date 타입으로 확정보정
-    let targetDate: Date
-    if (typeof targetDatetime === 'string') {
-      targetDate = new Date(targetDatetime)
+    let targetDate: Date;
+    if (typeof targetDatetime === "string") {
+      targetDate = new Date(targetDatetime);
 
       if (isNaN(targetDate.getTime())) {
-        throw new Error(`Date 타입으로 변환할 수 없습니다. (${targetDatetime})`)
+        throw new Error(
+          `Date 타입으로 변환할 수 없습니다. (${targetDatetime})`
+        );
       }
     } else {
-      targetDate = targetDatetime
+      targetDate = targetDatetime;
     }
 
-    const targetDateTime = targetDate.getTime()
+    const targetDateTime = targetDate.getTime();
 
     // 카운트다운 할 초 간격(기본 1)
-    let intervalSecond: number = 1
+    let intervalSecond: number = 1;
 
     switch (intervalType.toLowerCase()) {
-      case 's':
-      case 'second':
-      case 'seconds':
-        break
-      case 'ms':
-      case 'millisecond':
-      case 'milliseconds':
-        intervalSecond = 0.001
-        break
-      case 'm':
-      case 'minute':
-      case 'minutes':
-        intervalSecond = 60
-        break
-      case 'h':
-      case 'hour':
-      case 'hours':
-        intervalSecond = 3600
-        break
+      case "s":
+      case "second":
+      case "seconds":
+        break;
+      case "ms":
+      case "millisecond":
+      case "milliseconds":
+        intervalSecond = 0.001;
+        break;
+      case "m":
+      case "minute":
+      case "minutes":
+        intervalSecond = 60;
+        break;
+      case "h":
+      case "hour":
+      case "hours":
+        intervalSecond = 3600;
+        break;
       default:
-        break
+        break;
     }
 
     if (excuteOnInitialized === true) {
-      const diffInMs = targetDateTime - Date.now()
+      const diffInMs = targetDateTime - Date.now();
       countdownHandler(diffInMs, {
         hour: Math.floor(diffInMs / 1000 / 60 / 60),
         minute: Math.floor(diffInMs / 1000 / 60) % 60,
         second: Math.floor(diffInMs / 1000) % 60,
-      })
+      });
     }
 
     // 내부적으로 tick 구동되는 프로미스를 반환
@@ -2161,23 +2175,23 @@ class Skript {
       try {
         this.tick(intervalSecond)
           .do(() => {
-            const diffInMillisecond = targetDateTime - Date.now()
+            const diffInMillisecond = targetDateTime - Date.now();
             countdownHandler(diffInMillisecond, {
               hour: Math.floor(diffInMillisecond / 1000 / 60 / 60),
               minute: Math.floor(diffInMillisecond / 1000 / 60) % 60,
               second: Math.floor(diffInMillisecond / 1000) % 60,
-            })
+            });
           })
           .until(() => {
-            return targetDateTime > Date.now()
+            return targetDateTime > Date.now();
           })
           .whenEnd(() => {
-            resolve()
-          })
+            resolve();
+          });
       } catch (error) {
-        reject(error)
+        reject(error);
       }
-    })
+    });
   }
 
   /**
@@ -2188,7 +2202,7 @@ class Skript {
    * Skript.md5('nico');
    * ```
    */
-  md5 = md5
+  md5 = md5;
 }
 
-export = Skript
+export = Skript;
